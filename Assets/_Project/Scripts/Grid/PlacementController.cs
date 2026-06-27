@@ -17,6 +17,7 @@ namespace StrategyDemo.Grid
         [SerializeField] private PlacementPreview _preview;
 
         private readonly List<Vector2Int> _footprintBuffer = new List<Vector2Int>();
+        private readonly BuildingFactory _buildingFactory = new BuildingFactory();
         private BuildingData _current;
         private bool _isPlacing;
 
@@ -90,17 +91,12 @@ namespace StrategyDemo.Grid
         }
 
         /// <summary>
-        /// Single point that creates a placed building. The Factory slice moves this body into a
-        /// BuildingFactory; everything else in this controller stays unchanged.
+        /// Commits a building at the footprint: the factory creates it, then the grid marks the
+        /// cells occupied (the placement-side effect that stays the controller's responsibility).
         /// </summary>
         private void PlaceBuilding(BuildingData data, Vector2Int footprintOrigin)
         {
-            GameObject instance = Instantiate(data.Prefab);
-            instance.transform.position = FootprintCenterWorld(footprintOrigin, data.Size);
-
-            BuildingElement building = instance.GetComponent<BuildingElement>();
-            building.Initialize(data, footprintOrigin, Faction.Player);
-
+            _buildingFactory.Create(data, footprintOrigin, Faction.Player);
             GridManager.Instance.Occupy(footprintOrigin, data.Size);
         }
 
@@ -120,13 +116,6 @@ namespace StrategyDemo.Grid
                     _footprintBuffer.Add(new Vector2Int(origin.x + x, origin.y + y));
                 }
             }
-        }
-
-        private Vector3 FootprintCenterWorld(Vector2Int origin, Vector2Int size)
-        {
-            Vector3 min = GridManager.Instance.CellToWorldCenter(origin);
-            Vector3 max = GridManager.Instance.CellToWorldCenter(origin + size - Vector2Int.one);
-            return (min + max) * 0.5f;
         }
     }
 }
