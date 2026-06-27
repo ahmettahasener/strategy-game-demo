@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using StrategyDemo.Core;
 using StrategyDemo.Data;
 using UnityEngine;
@@ -6,10 +7,11 @@ namespace StrategyDemo.Buildings
 {
     /// <summary>
     /// A placed building on the board. Supplies its stats from <see cref="BuildingData"/>, remembers
-    /// the grid footprint it occupies, and releases those cells when destroyed.
+    /// the grid footprint it occupies, and releases those cells when destroyed. Implements
+    /// <see cref="IProducer"/> data-driven — only buildings whose data is a producer can make units.
     /// </summary>
     [RequireComponent(typeof(SpriteRenderer))]
-    public sealed class BuildingElement : GameElement
+    public sealed class BuildingElement : GameElement, IProducer
     {
         [SerializeField] private Color _highlightTint = Color.cyan;
 
@@ -21,6 +23,14 @@ namespace StrategyDemo.Buildings
         public BuildingData Data => _data;
 
         public override int MaxHp => _data != null ? _data.MaxHp : 0;
+
+        public bool CanProduce => _data != null && _data.IsProducer;
+
+        public IReadOnlyList<UnitData> ProducibleUnits =>
+            _data != null ? _data.ProducibleUnits : System.Array.Empty<UnitData>();
+
+        public Vector2Int SpawnCell =>
+            _footprintOrigin + (_data != null ? _data.SpawnPointOffset : Vector2Int.zero);
 
         private void Awake()
         {

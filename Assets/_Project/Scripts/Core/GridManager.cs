@@ -37,6 +37,12 @@ namespace StrategyDemo.Core
             return _groundTilemap.GetCellCenterWorld(new Vector3Int(cell.x, cell.y, 0));
         }
 
+        /// <summary>True if the cell lies inside the board rectangle.</summary>
+        public bool IsInBounds(Vector2Int cell)
+        {
+            return _model.IsInBounds(cell);
+        }
+
         public bool IsAreaFree(Vector2Int footprintOrigin, Vector2Int size)
         {
             return _model.IsAreaFree(footprintOrigin, size);
