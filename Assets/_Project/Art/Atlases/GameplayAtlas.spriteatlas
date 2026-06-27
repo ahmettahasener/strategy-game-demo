@@ -45,6 +45,8 @@ SpriteAtlas:
   - {fileID: 21300000, guid: a43cfe27d582c4b44b9be330a4b1d81d, type: 3}
   - {fileID: 21300000, guid: 98bd2dc77a8a3fd47800f656137a50ab, type: 3}
   - {fileID: 21300000, guid: 9bf0963820151d34b8ca0a0f14ef040f, type: 3}
+  - {fileID: 21300000, guid: a3dfb879aff268c4a8ac5c206c3639d5, type: 3}
+  - {fileID: 21300000, guid: 0e4df19b6df68364cbed2e586c2c8854, type: 3}
   - {fileID: 21300000, guid: b18d23eb4b8d5dc4db2c5f7c25672f59, type: 3}
   - {fileID: 21300000, guid: 5251aaac41e4300409c127284d654410, type: 3}
   - {fileID: 21300000, guid: 6d21be5ddbb312a448645e4d5aaf5920, type: 3}
@@ -62,6 +64,8 @@ SpriteAtlas:
   - spr_trainingyard
   - spr_stoneworkshop
   - spr_guardpost
+  - spr_siegeworkshop
+  - spr_alchemistlab
   - fx_selection_ring
   - grid_cell
   - fx_path_marker

@@ -18,6 +18,7 @@ namespace StrategyDemo.UI
         [SerializeField] private RectTransform _content;
         [SerializeField] private BuildingCardView _cellPrefab;
         [SerializeField] private float _cellHeight = 100f;
+        [SerializeField, Min(0)] private int _maxPooledCells = 6;
 
         private readonly List<BuildingCardView> _cells = new List<BuildingCardView>();
         private IReadOnlyList<BuildingData> _items;
@@ -40,6 +41,11 @@ namespace StrategyDemo.UI
             Canvas.ForceUpdateCanvases();
             float viewportHeight = _scrollRect.viewport.rect.height;
             int visibleCount = Mathf.Max(4, Mathf.CeilToInt(viewportHeight / _cellHeight) + 2);
+            if (_maxPooledCells > 0)
+            {
+                visibleCount = Mathf.Min(visibleCount, _maxPooledCells);
+            }
+
             EnsureCells(Mathf.Min(visibleCount, _items.Count));
 
             _scrollRect.onValueChanged.RemoveListener(OnScrolled);

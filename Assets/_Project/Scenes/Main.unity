@@ -1771,7 +1771,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: e83962370f1e10441b6a9679c044070c, type: 2}
   - {fileID: 11400000, guid: dcc142f5a1f8fdf42afee04a7d5c4824, type: 2}
   - {fileID: 11400000, guid: dacaa5113f6a0ad45a63be56938c27d4, type: 2}
+  - {fileID: 11400000, guid: 7c4ce064616548148a7f0584a6b72c5d, type: 2}
   - {fileID: 11400000, guid: 36c0dc5a8bdb8d747b08cb3d029251c6, type: 2}
+  - {fileID: 11400000, guid: 0f01fb466e3e439fb70d3da8ee2e1a61, type: 2}
   - {fileID: 11400000, guid: 39be03890a1e65b439a8121ba2d00578, type: 2}
 --- !u!114 &946639132
 MonoBehaviour:
@@ -1789,6 +1791,7 @@ MonoBehaviour:
   _content: {fileID: 1622545743}
   _cellPrefab: {fileID: 5781121227069360191, guid: 6713a6be5a502c942baf8d019ca51c53, type: 3}
   _cellHeight: 100
+  _maxPooledCells: 6
 --- !u!114 &946639133
 MonoBehaviour:
   m_ObjectHideFlags: 0
