@@ -10,12 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a0d5d9d8af7ee664997a1168c1e61392, type: 3}
-  m_Name: StorehouseData
+  m_Name: TrainingYardData
   m_EditorClassIdentifier: 
-  _displayName: Storehouse
-  _icon: {fileID: 0}
+  _displayName: Training Yard
+  _icon: {fileID: 21300000, guid: 575a3c78946794e46921cda26b9c519c, type: 3}
+  _boardSprite: {fileID: 21300000, guid: a43cfe27d582c4b44b9be330a4b1d81d, type: 3}
   _prefab: {fileID: 4630428369191215681, guid: b18acec3d2441ba4890cef718e9d745c, type: 3}
-  _maxHp: 70
+  _maxHp: 65
   _size: {x: 2, y: 2}
   _spawnPointOffset: {x: 0, y: 0}
   _isProducer: 0

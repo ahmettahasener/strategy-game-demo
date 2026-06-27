@@ -13,7 +13,8 @@ MonoBehaviour:
   m_Name: WatchtowerData
   m_EditorClassIdentifier: 
   _displayName: Watchtower
-  _icon: {fileID: 0}
+  _icon: {fileID: 21300000, guid: 6edf325c12b6634459960da9982aeb8f, type: 3}
+  _boardSprite: {fileID: 21300000, guid: 941f2662a1b32284c83583c9d9d7a534, type: 3}
   _prefab: {fileID: 4630428369191215681, guid: b18acec3d2441ba4890cef718e9d745c, type: 3}
   _maxHp: 75
   _size: {x: 2, y: 2}

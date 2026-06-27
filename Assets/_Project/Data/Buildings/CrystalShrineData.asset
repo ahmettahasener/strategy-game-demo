@@ -10,13 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a0d5d9d8af7ee664997a1168c1e61392, type: 3}
-  m_Name: SawmillData
+  m_Name: CrystalShrineData
   m_EditorClassIdentifier: 
-  _displayName: Sawmill
-  _icon: {fileID: 0}
+  _displayName: Crystal Shrine
+  _icon: {fileID: 21300000, guid: cca98181bbbf267439b7613257f825ad, type: 3}
+  _boardSprite: {fileID: 21300000, guid: c5a69233521c06e4184e04e969bf2cbb, type: 3}
   _prefab: {fileID: 4630428369191215681, guid: b18acec3d2441ba4890cef718e9d745c, type: 3}
-  _maxHp: 70
-  _size: {x: 2, y: 1}
+  _maxHp: 60
+  _size: {x: 1, y: 1}
   _spawnPointOffset: {x: 0, y: 0}
   _isProducer: 0
   _producibleUnits: []

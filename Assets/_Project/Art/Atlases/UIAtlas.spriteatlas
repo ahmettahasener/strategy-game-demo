@@ -38,26 +38,36 @@ SpriteAtlas:
     cachedData: {fileID: 0}
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
+  - {fileID: 21300000, guid: cca98181bbbf267439b7613257f825ad, type: 3}
   - {fileID: 21300000, guid: 3837c032ee1ec3e458d4bf2cb7ac3c8f, type: 3}
+  - {fileID: 21300000, guid: 9e1e3942063e26f4db5e0b6bfeeaf8b4, type: 3}
   - {fileID: 21300000, guid: 0c63db54b7d231143b19175620c6cae3, type: 3}
   - {fileID: 21300000, guid: 4a491cb48b412e941ba134aef5e5cf31, type: 3}
   - {fileID: 21300000, guid: d80b4555b34ef98458eb04c75fbdfecf, type: 3}
   - {fileID: 21300000, guid: 0b6fce65cd5406d4c8f09a978d999d52, type: 3}
   - {fileID: 21300000, guid: 457de5d51228ec244829c943429aab96, type: 3}
+  - {fileID: 21300000, guid: 55ab3856cf66c244ca0a0dc99593205f, type: 3}
+  - {fileID: 21300000, guid: 575a3c78946794e46921cda26b9c519c, type: 3}
   - {fileID: 21300000, guid: cbff15c9f540eac47918bdeea08c7e4e, type: 3}
   - {fileID: 21300000, guid: 6edf325c12b6634459960da9982aeb8f, type: 3}
   - {fileID: 21300000, guid: 032d700dcebbe6140b41d54d2c153c36, type: 3}
+  - {fileID: 21300000, guid: 73e0f86dd8d30c7439b0f6d44b8d8038, type: 3}
   - {fileID: 21300000, guid: a112ebeeaeb8d084188734529a8bd669, type: 3}
   m_PackedSpriteNamesToIndex:
+  - icon_crystalshrine
   - icon_manawell
+  - icon_guardpost
   - frame_card
   - bar_healthfill
   - frame_infopanel
   - icon_archer
   - icon_barracks
+  - icon_arcanelibrary
+  - icon_trainingyard
   - icon_squire
   - icon_watchtower
   - frame_healthbar
+  - icon_stoneworkshop
   - icon_knight
   m_RenderDataMap: {}
   m_Tag: UIAtlas

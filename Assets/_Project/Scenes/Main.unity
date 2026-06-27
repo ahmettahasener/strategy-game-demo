@@ -149,8 +149,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2ccb9bd39a3e27440b7ebe57e988eec1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
 --- !u!4 &179379779
 Transform:
   m_ObjectHideFlags: 0
@@ -512,7 +512,7 @@ TilemapRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_ChunkSize: {x: 32, y: 32, z: 32}
-  m_ChunkCullingBounds: {x: 0, y: 0, z: 0}
+  m_ChunkCullingBounds: {x: 0.5, y: 0.5, z: 0}
   m_MaxChunkCount: 16
   m_MaxFrameAge: 16
   m_SortOrder: 0
@@ -1531,10 +1531,10 @@ Tilemap:
   m_AnimatedTiles: {}
   m_TileAssetArray:
   - m_RefCount: 100
-    m_Data: {fileID: 11400000, guid: 4efa9d2f6e073f9429bf9ae5e4998b8f, type: 2}
+    m_Data: {fileID: 11400000, guid: 8b9ab036d6667f34abd3047a66aa3ddb, type: 2}
   m_TileSpriteArray:
   - m_RefCount: 100
-    m_Data: {fileID: 21300000, guid: fba49f97eee22614893d6fc9f4e0ddac, type: 3}
+    m_Data: {fileID: 21300000, guid: dc6e5eca6c844724fa91157ab71bdead, type: 3}
   m_TileMatrixArray:
   - m_RefCount: 100
     m_Data:
@@ -1765,17 +1765,13 @@ MonoBehaviour:
   _scrollView: {fileID: 946639132}
   _placement: {fileID: 765423069}
   _roster:
-  - {fileID: 11400000, guid: e5d21fa9e936c9747a62bf301607ba09, type: 2}
+  - {fileID: 11400000, guid: 4b0c2b1d6ad525a4a96d1f92866882d9, type: 2}
   - {fileID: 11400000, guid: 1c597fc2cd92a7b498db393445a05679, type: 2}
-  - {fileID: 11400000, guid: a160a66a70225d14b9b28cf9b3ad61eb, type: 2}
+  - {fileID: 11400000, guid: 123bf76c5d45cd54e83309e5ca16ee6b, type: 2}
+  - {fileID: 11400000, guid: e83962370f1e10441b6a9679c044070c, type: 2}
   - {fileID: 11400000, guid: dcc142f5a1f8fdf42afee04a7d5c4824, type: 2}
-  - {fileID: 11400000, guid: 6a4021d2312d14f4b9697a05fb16e2f3, type: 2}
-  - {fileID: 11400000, guid: c8239a8bebde17e43b5480cf72a30093, type: 2}
-  - {fileID: 11400000, guid: e6b814e3d2b7a5146a4ccc22461f1528, type: 2}
-  - {fileID: 11400000, guid: 442b26a418978f9448ef420305bdf327, type: 2}
-  - {fileID: 11400000, guid: e85365b6a0919be4c8e2d90361ad1852, type: 2}
-  - {fileID: 11400000, guid: d451bf03f3b3fd140b73068f6f61a00b, type: 2}
-  - {fileID: 11400000, guid: 5bf3264e104024e46a969eff4d5c2082, type: 2}
+  - {fileID: 11400000, guid: dacaa5113f6a0ad45a63be56938c27d4, type: 2}
+  - {fileID: 11400000, guid: 36c0dc5a8bdb8d747b08cb3d029251c6, type: 2}
   - {fileID: 11400000, guid: 39be03890a1e65b439a8121ba2d00578, type: 2}
 --- !u!114 &946639132
 MonoBehaviour:
@@ -2424,6 +2420,7 @@ Transform:
   m_Children:
   - {fileID: 855180360}
   - {fileID: 1339364380}
+  - {fileID: 314159267}
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -2439,6 +2436,56 @@ Grid:
   m_CellGap: {x: 0, y: 0, z: 0}
   m_CellLayout: 0
   m_CellSwizzle: 0
+--- !u!1 &314159265
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 314159267}
+  - component: {fileID: 314159266}
+  m_Layer: 0
+  m_Name: BoardGridOverlay
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &314159266
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 314159265}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8f6e5135a1b84a54f944819d25d13d72, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
+  _origin: {x: 0, y: 0}
+  _width: 10
+  _height: 10
+  _lineThickness: 0.025
+  _color: {r: 0.08, g: 0.18, b: 0.08, a: 0.35}
+  _sortingOrder: 1
+--- !u!4 &314159267
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 314159265}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1699287613}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1701429776
 GameObject:
   m_ObjectHideFlags: 0

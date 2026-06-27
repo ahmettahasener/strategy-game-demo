@@ -13,7 +13,8 @@ MonoBehaviour:
   m_Name: KnightData
   m_EditorClassIdentifier: 
   _displayName: Knight
-  _icon: {fileID: 0}
+  _icon: {fileID: 21300000, guid: a112ebeeaeb8d084188734529a8bd669, type: 3}
+  _boardSprite: {fileID: 21300000, guid: 4410aec5cc35d9e45aaca80f7cd30d3e, type: 3}
   _prefab: {fileID: 8355459743249965511, guid: f0cdfb70e418c394b95b12f475093e1b, type: 3}
   _maxHp: 10
   _attackDamage: 10

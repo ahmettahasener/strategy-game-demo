@@ -13,10 +13,13 @@ namespace StrategyDemo.Units
     [RequireComponent(typeof(SpriteRenderer))]
     public sealed class UnitElement : GameElement
     {
+        private const float BoardSize = 0.8f; // on-board footprint of a unit, in cells
+
         [SerializeField] private Color _highlightTint = Color.yellow;
         [SerializeField] private Color _enemyTint = new Color(1f, 0.4f, 0.4f);
 
         private SpriteRenderer _spriteRenderer;
+        private BoxCollider2D _collider;
         private Color _originalColor;
         private Color _baseColor;
         private UnitData _data;
@@ -30,6 +33,7 @@ namespace StrategyDemo.Units
         private void Awake()
         {
             _spriteRenderer = GetComponent<SpriteRenderer>();
+            _collider = GetComponent<BoxCollider2D>();
             _originalColor = _spriteRenderer.color;
             _baseColor = _originalColor;
         }
@@ -46,6 +50,8 @@ namespace StrategyDemo.Units
                 _spriteRenderer.sprite = data.BoardSprite;
             }
 
+            ApplyBoardScale();
+            FitColliderToSprite();
             SetFaction(faction);
             _baseColor = faction == Faction.Enemy ? _enemyTint : _originalColor;
             OnDeselected(); // clears stale selection state and applies the base colour
@@ -55,6 +61,33 @@ namespace StrategyDemo.Units
         protected override void SetHighlight(bool isOn)
         {
             _spriteRenderer.color = isOn ? _highlightTint : _baseColor;
+        }
+
+        // Scale to a consistent on-board size (uniform, aspect-preserving), independent of the art's
+        // resolution / pixels-per-unit (sprite.bounds.size is the true unscaled world size).
+        private void ApplyBoardScale()
+        {
+            if (_spriteRenderer.sprite == null)
+            {
+                return;
+            }
+
+            Vector2 native = _spriteRenderer.sprite.bounds.size;
+            float scale = BoardSize / Mathf.Max(0.0001f, Mathf.Max(native.x, native.y));
+            transform.localScale = new Vector3(scale, scale, 1f);
+        }
+
+        // Match the click/selection collider to the sprite so the whole unit is clickable.
+        private void FitColliderToSprite()
+        {
+            if (_collider == null || _spriteRenderer.sprite == null)
+            {
+                return;
+            }
+
+            Bounds bounds = _spriteRenderer.sprite.bounds;
+            _collider.size = bounds.size;
+            _collider.offset = bounds.center;
         }
 
         protected override void RemoveFromBoard()

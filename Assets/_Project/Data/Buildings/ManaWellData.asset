@@ -13,7 +13,8 @@ MonoBehaviour:
   m_Name: ManaWellData
   m_EditorClassIdentifier: 
   _displayName: Mana Well
-  _icon: {fileID: 0}
+  _icon: {fileID: 21300000, guid: 3837c032ee1ec3e458d4bf2cb7ac3c8f, type: 3}
+  _boardSprite: {fileID: 21300000, guid: 33e1a3cdf9700574caef6323218a4dfc, type: 3}
   _prefab: {fileID: 4630428369191215681, guid: b18acec3d2441ba4890cef718e9d745c, type: 3}
   _maxHp: 50
   _size: {x: 1, y: 1}
