@@ -43,6 +43,9 @@ namespace StrategyDemo.Grid
                 return;
             }
 
+            // Entering build mode clears any unit selection so a right-click (which cancels
+            // placement) can't also issue a move order to a still-selected unit.
+            SelectionManager.Instance?.Deselect();
             _current = data;
             _isPlacing = true;
         }
