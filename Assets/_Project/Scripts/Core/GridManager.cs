@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using StrategyDemo.Grid;
+using StrategyDemo.Pathfinding;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -13,6 +15,7 @@ namespace StrategyDemo.Core
     {
         [SerializeField] private Tilemap _groundTilemap;
 
+        private readonly Pathfinder _pathfinder = new Pathfinder();
         private GridModel _model;
 
         protected override void Awake()
@@ -56,6 +59,12 @@ namespace StrategyDemo.Core
         public void Free(Vector2Int footprintOrigin, Vector2Int size)
         {
             _model.Free(footprintOrigin, size);
+        }
+
+        /// <summary>Shortest walkable path between two cells; buildings are obstacles (Brief #6).</summary>
+        public List<Vector2Int> FindPath(Vector2Int start, Vector2Int target)
+        {
+            return _pathfinder.FindPath(_model, start, target);
         }
 
         private void BuildModel()
