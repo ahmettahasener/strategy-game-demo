@@ -89,6 +89,60 @@ namespace StrategyDemo.Grid
             SetArea(footprintOrigin, size, false);
         }
 
+        /// <summary>
+        /// A free cell close to <paramref name="center"/> found by expanding-ring (Chebyshev) search:
+        /// returns <paramref name="center"/> itself when free, the first free cell on the nearest
+        /// surrounding ring otherwise, or null when none is found within <paramref name="maxRadius"/>.
+        /// Used to approach a building (start from a footprint cell to reach a walkable perimeter
+        /// cell). Note: it is nearest by ring radius to the centre, not optimised for the attacker's
+        /// side — that is sufficient, since the in-range check during approach triggers the attack.
+        /// Each ring scans only its perimeter (O(r)), so the whole search is O(maxRadius²).
+        /// </summary>
+        public Vector2Int? NearestFreeCell(Vector2Int center, int maxRadius)
+        {
+            if (IsFree(center))
+            {
+                return center;
+            }
+
+            for (int radius = 1; radius <= maxRadius; radius++)
+            {
+                // Top and bottom edges of the ring (corners included here).
+                for (int x = center.x - radius; x <= center.x + radius; x++)
+                {
+                    var top = new Vector2Int(x, center.y + radius);
+                    if (IsFree(top))
+                    {
+                        return top;
+                    }
+
+                    var bottom = new Vector2Int(x, center.y - radius);
+                    if (IsFree(bottom))
+                    {
+                        return bottom;
+                    }
+                }
+
+                // Left and right edges (corners already covered above).
+                for (int y = center.y - radius + 1; y <= center.y + radius - 1; y++)
+                {
+                    var left = new Vector2Int(center.x - radius, y);
+                    if (IsFree(left))
+                    {
+                        return left;
+                    }
+
+                    var right = new Vector2Int(center.x + radius, y);
+                    if (IsFree(right))
+                    {
+                        return right;
+                    }
+                }
+            }
+
+            return null;
+        }
+
         private static bool IsPositiveSize(Vector2Int size)
         {
             return size.x > 0 && size.y > 0;

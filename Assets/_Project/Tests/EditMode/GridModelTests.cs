@@ -94,5 +94,66 @@ namespace StrategyDemo.Tests.EditMode
             Assert.Throws<System.ArgumentOutOfRangeException>(
                 () => new GridModel(Vector2Int.zero, 0, 5));
         }
+
+        [Test]
+        public void NearestFreeCell_WhenCenterFree_ReturnsCenter()
+        {
+            GridModel grid = NewGrid();
+            var center = new Vector2Int(2, 2);
+
+            Assert.AreEqual(center, grid.NearestFreeCell(center, 4));
+        }
+
+        [Test]
+        public void NearestFreeCell_WhenCenterOccupied_ReturnsAdjacentFreeCell()
+        {
+            GridModel grid = NewGrid();
+            grid.Occupy(new Vector2Int(2, 2), Vector2Int.one);
+
+            Vector2Int? result = grid.NearestFreeCell(new Vector2Int(2, 2), 4);
+
+            Assert.IsTrue(result.HasValue);
+            Assert.IsTrue(grid.IsFree(result.Value));
+            Assert.AreNotEqual(new Vector2Int(2, 2), result.Value);
+        }
+
+        [Test]
+        public void NearestFreeCell_AroundMultiCellBuilding_ReturnsPerimeterCell()
+        {
+            GridModel grid = NewGrid(); // 5x5
+            grid.Occupy(new Vector2Int(1, 1), new Vector2Int(2, 2)); // 2x2 footprint
+
+            // Search from a footprint cell, as a unit would (the building's centre cell is occupied).
+            Vector2Int? result = grid.NearestFreeCell(new Vector2Int(2, 2), 4);
+
+            Assert.IsTrue(result.HasValue);
+            Assert.IsTrue(grid.IsFree(result.Value));
+            CollectionAssert.DoesNotContain(
+                new[]
+                {
+                    new Vector2Int(1, 1), new Vector2Int(2, 1),
+                    new Vector2Int(1, 2), new Vector2Int(2, 2),
+                },
+                result.Value);
+        }
+
+        [Test]
+        public void NearestFreeCell_WhenEverythingOccupied_ReturnsNull()
+        {
+            var grid = new GridModel(Vector2Int.zero, 3, 3);
+            grid.Occupy(Vector2Int.zero, new Vector2Int(3, 3)); // fill every cell
+
+            Assert.IsFalse(grid.NearestFreeCell(new Vector2Int(1, 1), 4).HasValue);
+        }
+
+        [Test]
+        public void NearestFreeCell_WhenNoFreeCellWithinRadius_ReturnsNull()
+        {
+            GridModel grid = NewGrid(); // 5x5
+            grid.Occupy(new Vector2Int(1, 1), new Vector2Int(3, 3)); // centre + ring 1 occupied
+
+            // Free cells exist at ring 2, but the search is capped at radius 1.
+            Assert.IsFalse(grid.NearestFreeCell(new Vector2Int(2, 2), 1).HasValue);
+        }
     }
 }

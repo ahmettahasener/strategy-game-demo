@@ -67,6 +67,12 @@ namespace StrategyDemo.Core
             return _pathfinder.FindPath(_model, start, target);
         }
 
+        /// <summary>Nearest walkable cell to <paramref name="cell"/> (e.g. a building's perimeter).</summary>
+        public Vector2Int? NearestFreeCell(Vector2Int cell)
+        {
+            return _model.NearestFreeCell(cell, Mathf.Max(_model.Width, _model.Height));
+        }
+
         private void BuildModel()
         {
             _groundTilemap.CompressBounds();
