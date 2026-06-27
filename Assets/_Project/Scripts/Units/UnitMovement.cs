@@ -20,22 +20,35 @@ namespace StrategyDemo.Units
             _unit = GetComponent<UnitElement>();
         }
 
-        /// <summary>Paths to <paramref name="targetCell"/> and starts moving; ignores unreachable targets.</summary>
-        public void MoveTo(Vector2Int targetCell)
+        /// <summary>True while a move is in progress.</summary>
+        public bool IsMoving => _moveRoutine != null;
+
+        /// <summary>
+        /// Paths to <paramref name="targetCell"/> and starts moving. Returns false (without moving)
+        /// when no path exists or the unit is already there.
+        /// </summary>
+        public bool MoveTo(Vector2Int targetCell)
         {
             Vector2Int startCell = GridManager.Instance.WorldToCell(transform.position);
             List<Vector2Int> path = GridManager.Instance.FindPath(startCell, targetCell);
             if (path.Count <= 1)
             {
-                return;
+                return false;
             }
 
+            Stop();
+            _moveRoutine = StartCoroutine(FollowPath(Simplify(path)));
+            return true;
+        }
+
+        /// <summary>Cancels the current move (e.g. when combat takes over or a new order arrives).</summary>
+        public void Stop()
+        {
             if (_moveRoutine != null)
             {
                 StopCoroutine(_moveRoutine);
+                _moveRoutine = null;
             }
-
-            _moveRoutine = StartCoroutine(FollowPath(Simplify(path)));
         }
 
         private IEnumerator FollowPath(List<Vector2Int> waypoints)

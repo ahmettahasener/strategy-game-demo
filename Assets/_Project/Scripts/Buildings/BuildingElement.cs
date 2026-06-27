@@ -14,6 +14,7 @@ namespace StrategyDemo.Buildings
     public sealed class BuildingElement : GameElement, IProducer
     {
         [SerializeField] private Color _highlightTint = Color.cyan;
+        [SerializeField] private Color _enemyTint = new Color(1f, 0.4f, 0.4f);
 
         private SpriteRenderer _spriteRenderer;
         private Color _baseColor;
@@ -47,6 +48,12 @@ namespace StrategyDemo.Buildings
             _footprintOrigin = footprintOrigin;
             transform.localScale = new Vector3(data.Size.x, data.Size.y, 1f);
             SetFaction(faction);
+            if (faction == Faction.Enemy)
+            {
+                _baseColor = _enemyTint;
+                _spriteRenderer.color = _baseColor;
+            }
+
             ResetHealth();
         }
 

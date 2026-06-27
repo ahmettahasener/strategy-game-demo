@@ -14,6 +14,7 @@ namespace StrategyDemo.Units
     public sealed class UnitElement : GameElement
     {
         [SerializeField] private Color _highlightTint = Color.yellow;
+        [SerializeField] private Color _enemyTint = new Color(1f, 0.4f, 0.4f);
 
         private SpriteRenderer _spriteRenderer;
         private Color _baseColor;
@@ -36,6 +37,12 @@ namespace StrategyDemo.Units
         {
             _data = data;
             SetFaction(faction);
+            if (faction == Faction.Enemy)
+            {
+                _baseColor = _enemyTint;
+                _spriteRenderer.color = _baseColor;
+            }
+
             ResetHealth();
         }
 

@@ -35,12 +35,26 @@ namespace StrategyDemo.Units
                 return;
             }
 
-            var movement = unit.GetComponent<UnitMovement>();
-            if (movement != null)
+            GameElement target = EntityUnderPointer();
+            var combat = unit.GetComponent<UnitCombat>();
+
+            if (target != null && target != unit && target.Faction != unit.Faction)
             {
-                Vector2Int targetCell = GridManager.Instance.WorldToCell(_input.PointerWorldPosition);
-                movement.MoveTo(targetCell);
+                combat?.Attack(target);
             }
+            else
+            {
+                // Move order: cancel any ongoing attack, then walk to the clicked cell.
+                combat?.StopCombat();
+                Vector2Int targetCell = GridManager.Instance.WorldToCell(_input.PointerWorldPosition);
+                unit.GetComponent<UnitMovement>()?.MoveTo(targetCell);
+            }
+        }
+
+        private GameElement EntityUnderPointer()
+        {
+            Collider2D hit = Physics2D.OverlapPoint(_input.PointerWorldPosition);
+            return hit != null ? hit.GetComponent<GameElement>() : null;
         }
     }
 }
