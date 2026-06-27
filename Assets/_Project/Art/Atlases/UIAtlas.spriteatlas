@@ -1,0 +1,64 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!687078895 &4343727234628468602
+SpriteAtlas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: UIAtlas
+  m_EditorData:
+    serializedVersion: 2
+    textureSettings:
+      serializedVersion: 2
+      anisoLevel: 1
+      compressionQuality: 50
+      maxTextureSize: 2048
+      textureCompression: 0
+      filterMode: 1
+      generateMipMaps: 0
+      readable: 0
+      crunchedCompression: 0
+      sRGB: 1
+    platformSettings: []
+    packingSettings:
+      serializedVersion: 2
+      padding: 4
+      blockOffset: 0
+      allowAlphaSplitting: 0
+      enableRotation: 0
+      enableTightPacking: 0
+      enableAlphaDilation: 0
+    secondaryTextureSettings: {}
+    variantMultiplier: 1
+    packables:
+    - {fileID: 102900000, guid: 1b34b28fb32e23242a68d915b6835247, type: 3}
+    bindAsDefault: 1
+    isAtlasV2: 0
+    cachedData: {fileID: 0}
+  m_MasterAtlas: {fileID: 0}
+  m_PackedSprites:
+  - {fileID: 21300000, guid: 3837c032ee1ec3e458d4bf2cb7ac3c8f, type: 3}
+  - {fileID: 21300000, guid: 0c63db54b7d231143b19175620c6cae3, type: 3}
+  - {fileID: 21300000, guid: 4a491cb48b412e941ba134aef5e5cf31, type: 3}
+  - {fileID: 21300000, guid: d80b4555b34ef98458eb04c75fbdfecf, type: 3}
+  - {fileID: 21300000, guid: 0b6fce65cd5406d4c8f09a978d999d52, type: 3}
+  - {fileID: 21300000, guid: 457de5d51228ec244829c943429aab96, type: 3}
+  - {fileID: 21300000, guid: cbff15c9f540eac47918bdeea08c7e4e, type: 3}
+  - {fileID: 21300000, guid: 6edf325c12b6634459960da9982aeb8f, type: 3}
+  - {fileID: 21300000, guid: 032d700dcebbe6140b41d54d2c153c36, type: 3}
+  - {fileID: 21300000, guid: a112ebeeaeb8d084188734529a8bd669, type: 3}
+  m_PackedSpriteNamesToIndex:
+  - icon_manawell
+  - frame_card
+  - bar_healthfill
+  - frame_infopanel
+  - icon_archer
+  - icon_barracks
+  - icon_squire
+  - icon_watchtower
+  - frame_healthbar
+  - icon_knight
+  m_RenderDataMap: {}
+  m_Tag: UIAtlas
+  m_IsVariant: 0

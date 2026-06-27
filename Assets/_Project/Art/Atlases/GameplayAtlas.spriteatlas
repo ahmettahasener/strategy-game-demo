@@ -1,0 +1,64 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!687078895 &4343727234628468602
+SpriteAtlas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: GameplayAtlas
+  m_EditorData:
+    serializedVersion: 2
+    textureSettings:
+      serializedVersion: 2
+      anisoLevel: 1
+      compressionQuality: 50
+      maxTextureSize: 2048
+      textureCompression: 0
+      filterMode: 1
+      generateMipMaps: 0
+      readable: 0
+      crunchedCompression: 0
+      sRGB: 1
+    platformSettings: []
+    packingSettings:
+      serializedVersion: 2
+      padding: 4
+      blockOffset: 0
+      allowAlphaSplitting: 0
+      enableRotation: 0
+      enableTightPacking: 0
+      enableAlphaDilation: 0
+    secondaryTextureSettings: {}
+    variantMultiplier: 1
+    packables:
+    - {fileID: 102900000, guid: f095e1ad7f071534c8f79b33f8bb0fbb, type: 3}
+    bindAsDefault: 1
+    isAtlasV2: 0
+    cachedData: {fileID: 0}
+  m_MasterAtlas: {fileID: 0}
+  m_PackedSprites:
+  - {fileID: 21300000, guid: 941f2662a1b32284c83583c9d9d7a534, type: 3}
+  - {fileID: 21300000, guid: 4410aec5cc35d9e45aaca80f7cd30d3e, type: 3}
+  - {fileID: 21300000, guid: b18d23eb4b8d5dc4db2c5f7c25672f59, type: 3}
+  - {fileID: 21300000, guid: 6d21be5ddbb312a448645e4d5aaf5920, type: 3}
+  - {fileID: 21300000, guid: b3d01ebdbca5c784b8665f1ebcc3350f, type: 3}
+  - {fileID: 21300000, guid: 33e1a3cdf9700574caef6323218a4dfc, type: 3}
+  - {fileID: 21300000, guid: 9d71ad9ea1ba3354ba115db1fd2146f5, type: 3}
+  - {fileID: 21300000, guid: a89f13beab9f9204491ec5dc4586591a, type: 3}
+  - {fileID: 21300000, guid: b696e72f8801bae4aa741ea71876ffe4, type: 3}
+  - {fileID: 21300000, guid: 23e63a6fec6a78d4ea69f159aa2837a6, type: 3}
+  m_PackedSpriteNamesToIndex:
+  - spr_watchtower
+  - spr_knight
+  - fx_selection_ring
+  - fx_path_marker
+  - tile_placement_invalid
+  - spr_manawell
+  - spr_archer
+  - tile_placement_valid
+  - spr_barracks
+  - spr_squire
+  m_RenderDataMap: {}
+  m_Tag: GameplayAtlas
+  m_IsVariant: 0
