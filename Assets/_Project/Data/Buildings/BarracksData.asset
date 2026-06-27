@@ -17,6 +17,9 @@ MonoBehaviour:
   _prefab: {fileID: 4630428369191215681, guid: b18acec3d2441ba4890cef718e9d745c, type: 3}
   _maxHp: 100
   _size: {x: 2, y: 2}
-  _spawnPointOffset: {x: 0, y: 0}
+  _spawnPointOffset: {x: 0, y: -1}
   _isProducer: 1
-  _producibleUnits: []
+  _producibleUnits:
+  - {fileID: 11400000, guid: bd89f9b9df0acbc4f9a2fbe9b920957a, type: 2}
+  - {fileID: 11400000, guid: 6149fb109f244374daab250e38fcb359, type: 2}
+  - {fileID: 11400000, guid: a3b646ab964f7004d96d8f0b07c5e343, type: 2}
