@@ -1,0 +1,22 @@
+# Normalize line endings; let git detect text vs binary.
+* text=auto
+*.cs text diff=csharp
+
+# Unity YAML assets — keep diffable; smart-merge when the unityyamlmerge
+# driver is configured in git config (otherwise a harmless no-op).
+*.unity  merge=unityyamlmerge eol=lf
+*.prefab merge=unityyamlmerge eol=lf
+*.asset  merge=unityyamlmerge eol=lf
+*.meta   merge=unityyamlmerge eol=lf
+
+# Binary assets — never normalize / try to diff as text.
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.gif  binary
+*.psd  binary
+*.wav  binary
+*.mp3  binary
+*.ogg  binary
+*.ttf  binary
+*.otf  binary
