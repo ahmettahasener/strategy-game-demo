@@ -41,6 +41,11 @@ namespace StrategyDemo.Units
         public void Initialize(UnitData data, Faction faction)
         {
             _data = data;
+            if (data.BoardSprite != null)
+            {
+                _spriteRenderer.sprite = data.BoardSprite;
+            }
+
             SetFaction(faction);
             _baseColor = faction == Faction.Enemy ? _enemyTint : _originalColor;
             OnDeselected(); // clears stale selection state and applies the base colour

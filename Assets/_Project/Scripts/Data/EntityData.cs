@@ -12,11 +12,18 @@ namespace StrategyDemo.Data
     {
         [SerializeField] private string _displayName;
         [SerializeField] private Sprite _icon;
+        [SerializeField] private Sprite _boardSprite;
         [SerializeField] private GameObject _prefab;
         [SerializeField, Min(1)] private int _maxHp = 1;
 
         public string DisplayName => _displayName;
+
+        /// <summary>Badge sprite for the production card / info panel (UI).</summary>
         public Sprite Icon => _icon;
+
+        /// <summary>World sprite drawn on the board by the spawned entity.</summary>
+        public Sprite BoardSprite => _boardSprite;
+
         public GameObject Prefab => _prefab;
         public int MaxHp => _maxHp;
     }

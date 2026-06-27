@@ -47,6 +47,11 @@ namespace StrategyDemo.Buildings
             _data = data;
             _footprintOrigin = footprintOrigin;
             transform.localScale = new Vector3(data.Size.x, data.Size.y, 1f);
+            if (data.BoardSprite != null)
+            {
+                _spriteRenderer.sprite = data.BoardSprite;
+            }
+
             SetFaction(faction);
             if (faction == Faction.Enemy)
             {
