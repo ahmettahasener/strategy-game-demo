@@ -20,6 +20,12 @@ namespace StrategyDemo.Units
             _unit = GetComponent<UnitElement>();
         }
 
+        // Clear movement state when pooled (deactivation already stops the coroutine).
+        private void OnDisable()
+        {
+            Stop();
+        }
+
         /// <summary>True while a move is in progress.</summary>
         public bool IsMoving => _moveRoutine != null;
 

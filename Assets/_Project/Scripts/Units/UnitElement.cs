@@ -17,6 +17,7 @@ namespace StrategyDemo.Units
         [SerializeField] private Color _enemyTint = new Color(1f, 0.4f, 0.4f);
 
         private SpriteRenderer _spriteRenderer;
+        private Color _originalColor;
         private Color _baseColor;
         private UnitData _data;
 
@@ -29,26 +30,31 @@ namespace StrategyDemo.Units
         private void Awake()
         {
             _spriteRenderer = GetComponent<SpriteRenderer>();
-            _baseColor = _spriteRenderer.color;
+            _originalColor = _spriteRenderer.color;
+            _baseColor = _originalColor;
         }
 
-        /// <summary>Configures the unit after instantiation (called by the unit factory).</summary>
+        /// <summary>
+        /// Configures the unit after a factory spawn or a pool reuse. Resets every per-instance bit of
+        /// state — faction, colour, selection highlight and health — so a recycled instance starts clean.
+        /// </summary>
         public void Initialize(UnitData data, Faction faction)
         {
             _data = data;
             SetFaction(faction);
-            if (faction == Faction.Enemy)
-            {
-                _baseColor = _enemyTint;
-                _spriteRenderer.color = _baseColor;
-            }
-
+            _baseColor = faction == Faction.Enemy ? _enemyTint : _originalColor;
+            OnDeselected(); // clears stale selection state and applies the base colour
             ResetHealth();
         }
 
         protected override void SetHighlight(bool isOn)
         {
             _spriteRenderer.color = isOn ? _highlightTint : _baseColor;
+        }
+
+        protected override void RemoveFromBoard()
+        {
+            PoolManager.Instance.Release(gameObject);
         }
     }
 }

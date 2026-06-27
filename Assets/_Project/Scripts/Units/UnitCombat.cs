@@ -27,6 +27,12 @@ namespace StrategyDemo.Units
             _attack = GetComponent<AttackEffector>();
         }
 
+        // Clear combat state when pooled (deactivation already stops the coroutine).
+        private void OnDisable()
+        {
+            StopCombat();
+        }
+
         /// <summary>Orders this unit to engage <paramref name="target"/>.</summary>
         public void Attack(GameElement target)
         {

@@ -24,6 +24,12 @@ namespace StrategyDemo.Units
             _unit = GetComponent<UnitElement>();
         }
 
+        // Reset the cooldown on spawn / pool reuse so a recycled unit can attack immediately.
+        private void OnEnable()
+        {
+            _nextAttackTime = 0f;
+        }
+
         /// <summary>Deals damage if the cooldown has elapsed; returns whether an attack happened.</summary>
         public bool TryAttack(IDamageable target)
         {
