@@ -31,9 +31,10 @@ namespace StrategyDemo.Core
 
         private void Update()
         {
-            if (_camera != null)
+            Vector3 screenPosition = Input.mousePosition;
+            if (_camera != null && IsFinite(screenPosition))
             {
-                PointerWorldPosition = _camera.ScreenToWorldPoint(Input.mousePosition);
+                PointerWorldPosition = _camera.ScreenToWorldPoint(screenPosition);
             }
 
             if (Input.GetMouseButtonDown(0))
@@ -45,6 +46,12 @@ namespace StrategyDemo.Core
             {
                 SecondaryPressed?.Invoke();
             }
+        }
+
+        private static bool IsFinite(Vector3 value)
+        {
+            return !float.IsInfinity(value.x) && !float.IsInfinity(value.y)
+                && !float.IsNaN(value.x) && !float.IsNaN(value.y);
         }
     }
 }

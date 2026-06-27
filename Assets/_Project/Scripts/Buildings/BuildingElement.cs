@@ -33,6 +33,7 @@ namespace StrategyDemo.Buildings
         {
             _data = data;
             _footprintOrigin = footprintOrigin;
+            transform.localScale = new Vector3(data.Size.x, data.Size.y, 1f);
             SetFaction(faction);
             ResetHealth();
         }
