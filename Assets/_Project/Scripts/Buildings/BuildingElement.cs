@@ -22,6 +22,8 @@ namespace StrategyDemo.Buildings
 
         public BuildingData Data => _data;
 
+        public override EntityData Definition => _data;
+
         public override int MaxHp => _data != null ? _data.MaxHp : 0;
 
         public bool CanProduce => _data != null && _data.IsProducer;

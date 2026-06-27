@@ -21,6 +21,8 @@ namespace StrategyDemo.Units
 
         public UnitData Data => _data;
 
+        public override EntityData Definition => _data;
+
         public override int MaxHp => _data != null ? _data.MaxHp : 0;
 
         private void Awake()

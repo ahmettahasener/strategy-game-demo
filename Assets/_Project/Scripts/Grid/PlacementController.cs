@@ -78,7 +78,8 @@ namespace StrategyDemo.Grid
             if (GridManager.Instance.IsAreaFree(origin, _current.Size))
             {
                 PlaceBuilding(_current, origin);
-                CancelPlacement();
+                // Stay in placement mode so several buildings can be placed; right-click exits.
+                // This also keeps selection from firing on the same click that placed a building.
             }
         }
 

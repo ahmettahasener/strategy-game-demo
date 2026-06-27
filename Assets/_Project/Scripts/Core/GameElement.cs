@@ -1,3 +1,4 @@
+using StrategyDemo.Data;
 using UnityEngine;
 
 namespace StrategyDemo.Core
@@ -14,6 +15,9 @@ namespace StrategyDemo.Core
 
         /// <summary>Full health for this entity — supplied by the concrete type from its data.</summary>
         public abstract int MaxHp { get; }
+
+        /// <summary>The ScriptableObject definition (icon, name, …) the info panel renders.</summary>
+        public abstract EntityData Definition { get; }
 
         public int CurrentHp => _currentHp;
         public bool IsDead => _isDead;
