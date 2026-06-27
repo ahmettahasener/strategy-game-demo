@@ -7,9 +7,10 @@ using UnityEngine;
 namespace StrategyDemo.DebugTools
 {
     /// <summary>
-    /// Temporary reviewer/testing helper: spawns enemy units (X) and enemy buildings (C) under the
-    /// pointer so player units have something to attack, until a real battleground/AI exists. The
-    /// component always compiles; only the cheat input runs in the Editor and Development builds.
+    /// Development/reviewer helper: spawns extra enemy units (X) and enemy buildings (C) under the
+    /// pointer. The default demo loop is owned by ScenarioSetup; this remains a fast way to stress
+    /// combat and death cases. The component always compiles; only the cheat input runs in the
+    /// Editor and Development builds.
     /// </summary>
     public sealed class CombatDebug : MonoBehaviour
     {
