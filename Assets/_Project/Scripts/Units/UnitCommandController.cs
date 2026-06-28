@@ -1,6 +1,7 @@
 using StrategyDemo.Core;
 using StrategyDemo.Grid;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 namespace StrategyDemo.Units
 {
@@ -25,6 +26,13 @@ namespace StrategyDemo.Units
 
         private void OnSecondaryPressed()
         {
+            // A right-click on a panel (build menu, production buttons) must not leak a world
+            // move/attack order to the cell hidden behind the UI.
+            if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
+            {
+                return;
+            }
+
             if (_placement != null && _placement.IsPlacing)
             {
                 return;

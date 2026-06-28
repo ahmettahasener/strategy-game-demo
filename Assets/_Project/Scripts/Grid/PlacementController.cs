@@ -3,6 +3,7 @@ using StrategyDemo.Buildings;
 using StrategyDemo.Core;
 using StrategyDemo.Data;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 namespace StrategyDemo.Grid
 {
@@ -73,6 +74,13 @@ namespace StrategyDemo.Grid
         private void OnPrimaryPressed()
         {
             if (!_isPlacing)
+            {
+                return;
+            }
+
+            // Clicking a UI panel (e.g. another build-menu card) must route through that card,
+            // not commit a building on the cell hidden behind the panel.
+            if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
             {
                 return;
             }

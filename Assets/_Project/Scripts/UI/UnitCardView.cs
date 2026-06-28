@@ -17,6 +17,16 @@ namespace StrategyDemo.UI
         private UnitData _data;
         private Action<UnitData> _onClick;
 
+        private void Awake()
+        {
+            // Bound once: HandleClick always reads the current _data/_onClick, so re-binding the card
+            // never re-allocates a delegate (mirrors BuildingCardView).
+            if (_button != null)
+            {
+                _button.onClick.AddListener(HandleClick);
+            }
+        }
+
         public void Bind(UnitData data, Action<UnitData> onClick)
         {
             _data = data;
@@ -25,9 +35,6 @@ namespace StrategyDemo.UI
             {
                 _icon.sprite = data.Icon;
             }
-
-            _button.onClick.RemoveAllListeners();
-            _button.onClick.AddListener(HandleClick);
         }
 
         private void HandleClick()
