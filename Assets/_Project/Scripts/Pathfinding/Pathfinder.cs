@@ -9,16 +9,28 @@ namespace StrategyDemo.Pathfinding
     /// not. Built from scratch (no NavMesh): a binary <see cref="Heap{T}"/> open set, octile
     /// heuristic, and corner-cutting forbidden so diagonals never clip a building corner (Brief #16).
     /// Pure logic (Unity value types only) so it is fully EditMode-testable.
+    /// <para>
+    /// The open/closed working sets are reused across calls to keep pathing alloc-light (only the
+    /// returned path and the per-cell <see cref="Node"/>s are fresh). This makes a single instance
+    /// stateful, so <see cref="FindPath"/> is <b>not</b> re-entrant — call it synchronously from one
+    /// thread, which is how the game uses it (one shared instance on the main thread).
+    /// </para>
     /// </summary>
     public sealed class Pathfinder
     {
         private const int OrthogonalCost = 10;
         private const int DiagonalCost = 14;
 
+        // Reused across calls (cleared each FindPath) so repeated pathing doesn't churn the GC.
+        private readonly Dictionary<Vector2Int, Node> _openLookup = new Dictionary<Vector2Int, Node>();
+        private readonly HashSet<Vector2Int> _closed = new HashSet<Vector2Int>();
+        private Heap<Node> _open;
+
         /// <summary>
         /// Shortest walkable path from <paramref name="start"/> to <paramref name="target"/>,
         /// inclusive of both. Returns a single-cell list when they are equal, or an empty list when
-        /// the target is unreachable or not walkable.
+        /// the target is unreachable or not walkable. The returned list is freshly allocated, so
+        /// callers may hold onto it across frames.
         /// </summary>
         public List<Vector2Int> FindPath(GridModel grid, Vector2Int start, Vector2Int target)
         {
@@ -34,29 +46,44 @@ namespace StrategyDemo.Pathfinding
                 return path;
             }
 
-            var open = new Heap<Node>(grid.Width * grid.Height);
-            var openLookup = new Dictionary<Vector2Int, Node>();
-            var closed = new HashSet<Vector2Int>();
+            PrepareWorkingSets(grid.Width * grid.Height);
 
             var startNode = new Node(start) { GCost = 0, HCost = Heuristic(start, target) };
-            open.Add(startNode);
-            openLookup[start] = startNode;
+            _open.Add(startNode);
+            _openLookup[start] = startNode;
 
-            while (open.Count > 0)
+            while (_open.Count > 0)
             {
-                Node current = open.RemoveFirst();
-                openLookup.Remove(current.Cell);
-                closed.Add(current.Cell);
+                Node current = _open.RemoveFirst();
+                _openLookup.Remove(current.Cell);
+                _closed.Add(current.Cell);
 
                 if (current.Cell == target)
                 {
-                    return Reconstruct(current);
+                    Reconstruct(current, path);
+                    return path;
                 }
 
-                ExpandNeighbours(grid, current, target, open, openLookup, closed);
+                ExpandNeighbours(grid, current, target, _open, _openLookup, _closed);
             }
 
             return path;
+        }
+
+        // Reuse the heap when it is large enough; only grow (never shrink) it for a bigger grid.
+        private void PrepareWorkingSets(int capacity)
+        {
+            if (_open == null || _open.Capacity < capacity)
+            {
+                _open = new Heap<Node>(capacity);
+            }
+            else
+            {
+                _open.Clear();
+            }
+
+            _openLookup.Clear();
+            _closed.Clear();
         }
 
         private static void ExpandNeighbours(
@@ -126,9 +153,9 @@ namespace StrategyDemo.Pathfinding
             return DiagonalCost * min + OrthogonalCost * (max - min);
         }
 
-        private static List<Vector2Int> Reconstruct(Node target)
+        // Walks parent links back from the target and writes the start->target order into `path`.
+        private static void Reconstruct(Node target, List<Vector2Int> path)
         {
-            var path = new List<Vector2Int>();
             Node node = target;
             while (node != null)
             {
@@ -137,7 +164,6 @@ namespace StrategyDemo.Pathfinding
             }
 
             path.Reverse();
-            return path;
         }
 
         private sealed class Node : IHeapItem<Node>

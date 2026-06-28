@@ -33,6 +33,19 @@ namespace StrategyDemo.Pathfinding
 
         public int Count => _count;
 
+        /// <summary>Backing-array size — the most items the heap can hold before it must be re-created.</summary>
+        public int Capacity => _items.Length;
+
+        /// <summary>
+        /// Empties the heap for reuse without re-allocating its backing array. Clears the slots so
+        /// stored references can be collected rather than pinned for the heap's lifetime.
+        /// </summary>
+        public void Clear()
+        {
+            Array.Clear(_items, 0, _count);
+            _count = 0;
+        }
+
         public void Add(T item)
         {
             if (_count >= _items.Length)
