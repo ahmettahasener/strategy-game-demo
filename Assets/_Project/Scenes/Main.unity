@@ -2063,9 +2063,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _previewTilemap: {fileID: 1339364378}
-  _cellTile: {fileID: 11400000, guid: 4efa9d2f6e073f9429bf9ae5e4998b8f, type: 2}
-  _validColor: {r: 0.3, g: 1, b: 0.3, a: 0.5}
-  _invalidColor: {r: 1, g: 0.3, b: 0.3, a: 0.5}
+  _validTile: {fileID: 11400000, guid: 924ce64bf80d4c4fa4d889c5b12b2d11, type: 2}
+  _invalidTile: {fileID: 11400000, guid: 689358a873d64532a3e2fdd8cbe9ec3f, type: 2}
+  _validColor: {r: 1, g: 1, b: 1, a: 1}
+  _invalidColor: {r: 1, g: 1, b: 1, a: 1}
+  _tileVisualScale: 2
 --- !u!1839735485 &1339364378
 Tilemap:
   m_ObjectHideFlags: 0
