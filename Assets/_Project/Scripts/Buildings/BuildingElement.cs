@@ -88,10 +88,10 @@ namespace StrategyDemo.Buildings
             {
                 if (isOn)
                 {
-                    SizeSelectionRing();
+                    SizeSelectionRing(); // size before activating so the pulse captures the right base
                 }
 
-                _selectionRing.enabled = isOn;
+                _selectionRing.gameObject.SetActive(isOn);
                 return;
             }
 
@@ -112,7 +112,8 @@ namespace StrategyDemo.Buildings
             _selectionRing.color = _selectionRingColor;
             _selectionRing.sortingLayerID = _spriteRenderer.sortingLayerID;
             _selectionRing.sortingOrder = _spriteRenderer.sortingOrder - 1; // ground ring, under the building
-            _selectionRing.enabled = false;
+            _selectionRing.gameObject.AddComponent<PulseScale>(); // breathe while selected
+            _selectionRing.gameObject.SetActive(false);
         }
 
         // Size the ring to the footprint and sit it at the base, counter-scaling the building's

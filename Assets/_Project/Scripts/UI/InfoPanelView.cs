@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using StrategyDemo.Core;
 using StrategyDemo.Data;
@@ -20,8 +21,11 @@ namespace StrategyDemo.UI
         [SerializeField] private Text _hpText;
         [SerializeField] private Transform _cardContainer;
         [SerializeField] private UnitCardView _unitCardPrefab;
+        [SerializeField] private float _showScaleFrom = 0.92f;
+        [SerializeField] private float _showDuration = 0.14f;
 
         private GameElement _current;
+        private Coroutine _showRoutine;
 
         /// <summary>Raised when a producible-unit card is clicked.</summary>
         public event Action<UnitData> ProduceRequested;
@@ -61,17 +65,59 @@ namespace StrategyDemo.UI
 
         private void Show(GameElement element)
         {
+            bool wasHidden = !_panelRoot.activeSelf;
             _panelRoot.SetActive(true);
             _iconImage.sprite = element.Definition.Icon;
             _nameText.text = element.Definition.DisplayName;
             UpdateHp(element);
             BuildCards(element);
+
+            if (wasHidden)
+            {
+                PlayShowTransition();
+            }
+        }
+
+        // A small scale-in when the panel first appears (alpha is left to the zoom-fader).
+        private void PlayShowTransition()
+        {
+            if (_showRoutine != null)
+            {
+                StopCoroutine(_showRoutine);
+            }
+
+            _showRoutine = StartCoroutine(ShowTransition());
+        }
+
+        private IEnumerator ShowTransition()
+        {
+            Transform panel = _panelRoot.transform;
+            float elapsed = 0f;
+            while (elapsed < _showDuration)
+            {
+                elapsed += Time.unscaledDeltaTime;
+                float t = Mathf.Clamp01(elapsed / Mathf.Max(0.0001f, _showDuration));
+                float eased = 1f - (1f - t) * (1f - t);
+                float scale = Mathf.Lerp(_showScaleFrom, 1f, eased);
+                panel.localScale = new Vector3(scale, scale, 1f);
+                yield return null;
+            }
+
+            panel.localScale = Vector3.one;
+            _showRoutine = null;
         }
 
         private void Hide()
         {
+            if (_showRoutine != null)
+            {
+                StopCoroutine(_showRoutine);
+                _showRoutine = null;
+            }
+
             ClearCards();
             _current = null;
+            _panelRoot.transform.localScale = Vector3.one;
             _panelRoot.SetActive(false);
         }
 

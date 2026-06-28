@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 5768599320377367917}
   - component: {fileID: 1924953493704130950}
   - component: {fileID: 5781121227069360191}
+  - component: {fileID: 2254373480376975563}
   m_Layer: 0
   m_Name: BuildingCard
   m_TagString: Untagged
@@ -139,6 +140,21 @@ MonoBehaviour:
   _icon: {fileID: 1149786682959106665}
   _label: {fileID: 3701972269578851120}
   _button: {fileID: 1924953493704130950}
+--- !u!114 &2254373480376975563
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5305404928658092367}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 12726869c90a72448a3c3ae7dc50199d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _hoverScale: 1.05
+  _pressScale: 0.96
+  _speed: 12
 --- !u!1 &5350479373341608305
 GameObject:
   m_ObjectHideFlags: 0

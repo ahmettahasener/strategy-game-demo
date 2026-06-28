@@ -38,6 +38,7 @@ SpriteAtlas:
     cachedData: {fileID: 0}
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
+  - {fileID: 21300000, guid: a74fe650f44112d4a994e2ddcf19010c, type: 3}
   - {fileID: 21300000, guid: 941f2662a1b32284c83583c9d9d7a534, type: 3}
   - {fileID: 21300000, guid: c5a69233521c06e4184e04e969bf2cbb, type: 3}
   - {fileID: 21300000, guid: 4a491cb48b412e941ba134aef5e5cf31, type: 3}
@@ -46,6 +47,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: a43cfe27d582c4b44b9be330a4b1d81d, type: 3}
   - {fileID: 21300000, guid: 98bd2dc77a8a3fd47800f656137a50ab, type: 3}
   - {fileID: 21300000, guid: 9bf0963820151d34b8ca0a0f14ef040f, type: 3}
+  - {fileID: 21300000, guid: 14e8e4a8b1e41ce4a8cdd38f6054e424, type: 3}
   - {fileID: 21300000, guid: a3dfb879aff268c4a8ac5c206c3639d5, type: 3}
   - {fileID: 21300000, guid: 0e4df19b6df68364cbed2e586c2c8854, type: 3}
   - {fileID: 21300000, guid: b18d23eb4b8d5dc4db2c5f7c25672f59, type: 3}
@@ -60,6 +62,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: b696e72f8801bae4aa741ea71876ffe4, type: 3}
   - {fileID: 21300000, guid: 23e63a6fec6a78d4ea69f159aa2837a6, type: 3}
   m_PackedSpriteNamesToIndex:
+  - fx_spark
   - spr_watchtower
   - spr_crystalshrine
   - bar_healthfill
@@ -68,6 +71,7 @@ SpriteAtlas:
   - spr_trainingyard
   - spr_stoneworkshop
   - spr_guardpost
+  - fx_cell
   - spr_siegeworkshop
   - spr_alchemistlab
   - fx_selection_ring
