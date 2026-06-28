@@ -81,6 +81,14 @@ namespace StrategyDemo.Grid
                 return;
             }
 
+            // Don't paint a footprint on the cell hidden behind a UI panel the pointer is over;
+            // commit (OnPrimaryPressed) already ignores those clicks, so the preview shouldn't show.
+            if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
+            {
+                _preview.Clear();
+                return;
+            }
+
             Vector2Int origin = CurrentFootprintOrigin();
             UpdateFootprintBuffer(origin, _current.Size);
             bool isValid = GridManager.Instance.IsAreaFree(origin, _current.Size);

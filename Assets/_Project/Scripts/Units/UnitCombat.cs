@@ -42,6 +42,9 @@ namespace StrategyDemo.Units
             }
 
             StopCombat();
+            // Cancel any move order already in progress; otherwise the unit would finish walking to
+            // its previous destination (CombatRoutine's approach is gated on !IsMoving) before engaging.
+            _movement.Stop();
             _combatRoutine = StartCoroutine(CombatRoutine(target));
         }
 

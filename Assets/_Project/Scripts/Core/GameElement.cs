@@ -182,6 +182,9 @@ namespace StrategyDemo.Core
         private void Die()
         {
             _isDead = true;
+            // Stop any in-flight spawn pop so its per-frame scale writes (and final snap) don't fight
+            // the death animation for control of the transform.
+            StopSpawnPop();
             GameEvents.RaiseEntityDied(this);
             OnDied();
             PlayDeathPoof();

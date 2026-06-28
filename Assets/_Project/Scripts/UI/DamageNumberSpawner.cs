@@ -42,6 +42,17 @@ namespace StrategyDemo.UI
         private void OnDisable()
         {
             GameEvents.DamageTaken -= OnDamageTaken;
+
+            // Disabling stops the float coroutines mid-flight, so their labels never reach the
+            // SetActive(false) that returns them to the pool. Retire them here, or they stay
+            // visible forever and GetLabel can never recycle them.
+            for (int i = 0; i < _pool.Count; i++)
+            {
+                if (_pool[i] != null)
+                {
+                    _pool[i].gameObject.SetActive(false);
+                }
+            }
         }
 
         private void OnDamageTaken(IDamageable entity, int amount)

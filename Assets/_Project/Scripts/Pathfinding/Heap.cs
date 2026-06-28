@@ -69,8 +69,15 @@ namespace StrategyDemo.Pathfinding
             T first = _items[0];
             _count--;
             _items[0] = _items[_count];
-            _items[0].HeapIndex = 0;
-            SortDown(_items[0]);
+            // Clear the vacated slot so the moved node isn't referenced twice (and the old reference
+            // isn't pinned past the heap's logical end), per the reuse contract documented on Clear.
+            _items[_count] = default;
+            if (_count > 0)
+            {
+                _items[0].HeapIndex = 0;
+                SortDown(_items[0]);
+            }
+
             return first;
         }
 

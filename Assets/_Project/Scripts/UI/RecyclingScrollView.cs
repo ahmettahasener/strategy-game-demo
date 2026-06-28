@@ -40,11 +40,11 @@ namespace StrategyDemo.UI
 
             Canvas.ForceUpdateCanvases();
             float viewportHeight = _scrollRect.viewport.rect.height;
-            int visibleCount = Mathf.Max(4, Mathf.CeilToInt(viewportHeight / _cellHeight) + 2);
-            if (_maxPooledCells > 0)
-            {
-                visibleCount = Mathf.Min(visibleCount, _maxPooledCells);
-            }
+            // Cells needed to fill the viewport plus a one-cell buffer at each edge for the recycle.
+            int required = Mathf.Max(4, Mathf.CeilToInt(viewportHeight / _cellHeight) + 2);
+            // _maxPooledCells caps the pool, but it can never drop below the count that covers the
+            // viewport — capping lower would leave the bottom rows permanently blank when scrolled.
+            int visibleCount = _maxPooledCells > 0 ? Mathf.Max(required, _maxPooledCells) : required;
 
             EnsureCells(Mathf.Min(visibleCount, _items.Count));
 
