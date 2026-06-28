@@ -13,6 +13,7 @@ namespace StrategyDemo.Core
         private int _currentHp;
         private bool _isDead;
         private bool _isSelected;
+        private Coroutine _spawnPopRoutine;
 
         /// <summary>Full health for this entity — supplied by the concrete type from its data.</summary>
         public abstract int MaxHp { get; }
@@ -94,6 +95,55 @@ namespace StrategyDemo.Core
         protected virtual void RemoveFromBoard()
         {
             Destroy(gameObject);
+        }
+
+        /// <summary>
+        /// Plays a short "pop" on appearance — scales from zero up to the entity's current scale with
+        /// an overshoot, so spawns/placements feel alive instead of snapping in. Transform-only, so it
+        /// adds no draw calls. Call <b>after</b> the final scale is set; concrete types pass their own
+        /// duration. A hand-written Coroutine (no tween library), per the brief.
+        /// </summary>
+        protected void PlaySpawnPop(float duration)
+        {
+            StopSpawnPop();
+            if (duration > 0f && isActiveAndEnabled)
+            {
+                _spawnPopRoutine = StartCoroutine(SpawnPopRoutine(duration));
+            }
+        }
+
+        /// <summary>Cancels an in-flight spawn pop (e.g. the entity dies mid-pop).</summary>
+        protected void StopSpawnPop()
+        {
+            if (_spawnPopRoutine != null)
+            {
+                StopCoroutine(_spawnPopRoutine);
+                _spawnPopRoutine = null;
+            }
+        }
+
+        private IEnumerator SpawnPopRoutine(float duration)
+        {
+            Vector3 finalScale = transform.localScale;
+            float elapsed = 0f;
+            while (elapsed < duration)
+            {
+                elapsed += Time.deltaTime;
+                float t = Mathf.Clamp01(elapsed / duration);
+                transform.localScale = finalScale * EaseOutBack(t);
+                yield return null;
+            }
+
+            transform.localScale = finalScale;
+            _spawnPopRoutine = null;
+        }
+
+        // Ease-out with a slight overshoot past 1 before settling — the classic "pop" feel.
+        private static float EaseOutBack(float t)
+        {
+            const float overshoot = 1.70158f;
+            float p = t - 1f;
+            return 1f + (overshoot + 1f) * p * p * p + overshoot * p * p;
         }
 
         private void Die()

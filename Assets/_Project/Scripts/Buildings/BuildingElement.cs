@@ -19,6 +19,7 @@ namespace StrategyDemo.Buildings
         [SerializeField] private Color _damageFlashTint = new Color(1f, 0.2f, 0.15f);
         [SerializeField] private float _damageFlashDuration = 0.08f;
         [SerializeField] private float _deathAnimationDuration = 0.24f;
+        [SerializeField] private float _spawnPopDuration = 0.18f;
 
         private SpriteRenderer _spriteRenderer;
         private BoxCollider2D _collider;
@@ -68,6 +69,7 @@ namespace StrategyDemo.Buildings
             }
 
             ResetHealth();
+            PlaySpawnPop(_spawnPopDuration); // after ApplyFootprintScale set the final scale
         }
 
         protected override void SetHighlight(bool isOn)
@@ -115,6 +117,7 @@ namespace StrategyDemo.Buildings
         protected override void OnDied()
         {
             StopDamageFlash();
+            StopSpawnPop();
             if (GridManager.Instance != null && _data != null)
             {
                 GridManager.Instance.Free(_footprintOrigin, _data.Size);

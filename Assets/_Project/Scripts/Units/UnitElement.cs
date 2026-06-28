@@ -20,6 +20,10 @@ namespace StrategyDemo.Units
         [SerializeField] private Color _damageFlashTint = new Color(1f, 0.2f, 0.15f);
         [SerializeField] private float _damageFlashDuration = 0.08f;
         [SerializeField] private float _deathAnimationDuration = 0.2f;
+        [SerializeField] private float _spawnPopDuration = 0.16f;
+
+        // Flip the sprite to face its travel direction. Off for art that is drawn symmetric/front-on.
+        [SerializeField] private bool _faceMovementDirection = true;
 
         // Optional selection-ring child. When assigned, selection is shown by toggling this ring instead
         // of tinting the sprite, so the unit art keeps its true colour. Falls back to the tint when null.
@@ -74,8 +78,24 @@ namespace StrategyDemo.Units
             SetFaction(faction);
             _baseColor = faction == Faction.Enemy ? _enemyTint : _originalColor;
             _spriteRenderer.color = _baseColor; // apply faction colour directly: with a ring, SetHighlight no longer sets it
+            _spriteRenderer.flipX = false; // reset facing for a recycled instance
             OnDeselected(); // clears stale selection state (ring off / base colour)
             ResetHealth();
+            PlaySpawnPop(_spawnPopDuration); // after ApplyBoardScale set the final scale
+        }
+
+        /// <summary>
+        /// Flips the sprite to face horizontal travel. Called by movement each leg; ignored for tiny
+        /// or purely vertical deltas so the unit doesn't flicker. No-op when facing is disabled.
+        /// </summary>
+        public void FaceMovement(float deltaX)
+        {
+            if (!_faceMovementDirection || Mathf.Abs(deltaX) < 0.01f)
+            {
+                return;
+            }
+
+            _spriteRenderer.flipX = deltaX < 0f;
         }
 
         protected override void SetHighlight(bool isOn)
@@ -170,6 +190,7 @@ namespace StrategyDemo.Units
         private IEnumerator ScaleFadeOutRoutine()
         {
             StopDamageFlash();
+            StopSpawnPop();
 
             Vector3 startScale = transform.localScale;
             Color startColor = _spriteRenderer.color;

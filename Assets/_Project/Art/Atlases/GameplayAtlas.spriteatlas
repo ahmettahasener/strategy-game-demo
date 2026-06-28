@@ -40,6 +40,7 @@ SpriteAtlas:
   m_PackedSprites:
   - {fileID: 21300000, guid: 941f2662a1b32284c83583c9d9d7a534, type: 3}
   - {fileID: 21300000, guid: c5a69233521c06e4184e04e969bf2cbb, type: 3}
+  - {fileID: 21300000, guid: 4a491cb48b412e941ba134aef5e5cf31, type: 3}
   - {fileID: 21300000, guid: 4410aec5cc35d9e45aaca80f7cd30d3e, type: 3}
   - {fileID: 21300000, guid: f5c39fa6fc712374da258b09fbc0f4d3, type: 3}
   - {fileID: 21300000, guid: a43cfe27d582c4b44b9be330a4b1d81d, type: 3}
@@ -49,6 +50,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 0e4df19b6df68364cbed2e586c2c8854, type: 3}
   - {fileID: 21300000, guid: b18d23eb4b8d5dc4db2c5f7c25672f59, type: 3}
   - {fileID: 21300000, guid: 5251aaac41e4300409c127284d654410, type: 3}
+  - {fileID: 21300000, guid: 032d700dcebbe6140b41d54d2c153c36, type: 3}
   - {fileID: 21300000, guid: 6d21be5ddbb312a448645e4d5aaf5920, type: 3}
   - {fileID: 21300000, guid: b3d01ebdbca5c784b8665f1ebcc3350f, type: 3}
   - {fileID: 21300000, guid: 33e1a3cdf9700574caef6323218a4dfc, type: 3}
@@ -59,6 +61,7 @@ SpriteAtlas:
   m_PackedSpriteNamesToIndex:
   - spr_watchtower
   - spr_crystalshrine
+  - bar_healthfill
   - spr_knight
   - spr_arcanelibrary
   - spr_trainingyard
@@ -68,6 +71,7 @@ SpriteAtlas:
   - spr_alchemistlab
   - fx_selection_ring
   - grid_cell
+  - frame_healthbar
   - fx_path_marker
   - tile_placement_invalid
   - spr_manawell

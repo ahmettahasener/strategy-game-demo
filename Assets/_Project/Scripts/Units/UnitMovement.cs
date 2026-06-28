@@ -63,6 +63,7 @@ namespace StrategyDemo.Units
             for (int i = 1; i < waypoints.Count; i++)
             {
                 Vector3 destination = GridManager.Instance.CellToWorldCenter(waypoints[i]);
+                _unit.FaceMovement(destination.x - transform.position.x);
                 while ((transform.position - destination).sqrMagnitude > 0.0001f)
                 {
                     transform.position =

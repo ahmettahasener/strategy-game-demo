@@ -19,10 +19,14 @@ namespace StrategyDemo.UI
         [SerializeField] private Color _criticalColor = new Color(1f, 0.15f, 0.08f, 1f);
 
         private GameElement _owner;
+        [SerializeField] private float _drainSpeed = 1.5f; // ratio units per second when HP drops
+
         private Transform _root;
         private SpriteRenderer _frame;
         private SpriteRenderer _fill;
         private bool _isSelected;
+        private float _displayedRatio = 1f;
+        private Coroutine _drainRoutine;
 
         private void Awake()
         {
@@ -38,6 +42,7 @@ namespace StrategyDemo.UI
 
         private void Start()
         {
+            _displayedRatio = TargetRatio();
             UpdateBar();
         }
 
@@ -45,14 +50,66 @@ namespace StrategyDemo.UI
         {
             GameEvents.HealthChanged -= OnHealthChanged;
             GameEvents.SelectionChanged -= OnSelectionChanged;
+            if (_drainRoutine != null)
+            {
+                StopCoroutine(_drainRoutine);
+                _drainRoutine = null;
+            }
         }
 
         private void OnHealthChanged(IDamageable entity)
         {
             if (ReferenceEquals(entity, _owner))
             {
-                UpdateBar();
+                AnimateFillTo(TargetRatio());
             }
+        }
+
+        private float TargetRatio()
+        {
+            return _owner == null || _owner.MaxHp <= 0
+                ? 0f
+                : Mathf.Clamp01((float)_owner.CurrentHp / _owner.MaxHp);
+        }
+
+        // Damage drains the bar down smoothly (a small Coroutine); healing and the initial
+        // spawn snap up instantly, so a fresh entity never plays a misleading "fill-up".
+        private void AnimateFillTo(float target)
+        {
+            if (target >= _displayedRatio || !isActiveAndEnabled)
+            {
+                if (_drainRoutine != null)
+                {
+                    StopCoroutine(_drainRoutine);
+                    _drainRoutine = null;
+                }
+
+                _displayedRatio = target;
+                UpdateBar();
+                return;
+            }
+
+            if (_drainRoutine != null)
+            {
+                StopCoroutine(_drainRoutine);
+            }
+
+            _drainRoutine = StartCoroutine(DrainRoutine(target));
+        }
+
+        private System.Collections.IEnumerator DrainRoutine(float target)
+        {
+            UpdateBar(); // show the bar immediately, then ease the fill down
+            while (_displayedRatio > target + 0.001f)
+            {
+                _displayedRatio = Mathf.MoveTowards(_displayedRatio, target, _drainSpeed * Time.deltaTime);
+                UpdateBar();
+                yield return null;
+            }
+
+            _displayedRatio = target;
+            UpdateBar();
+            _drainRoutine = null;
         }
 
         private void OnSelectionChanged(ISelectable selectable)
@@ -89,8 +146,10 @@ namespace StrategyDemo.UI
                 return;
             }
 
-            float ratio = Mathf.Clamp01((float)_owner.CurrentHp / _owner.MaxHp);
-            bool shouldShow = !_owner.IsDead && (_isSelected || ratio < 0.999f);
+            // Visibility tracks real HP (and selection); the fill is drawn from the animated value so
+            // a draining bar stays visible until it has finished catching up.
+            float ratio = _displayedRatio;
+            bool shouldShow = !_owner.IsDead && (_isSelected || TargetRatio() < 0.999f || ratio < 0.999f);
             SetVisible(shouldShow);
 
             if (!shouldShow)
