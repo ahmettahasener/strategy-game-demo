@@ -1708,6 +1708,8 @@ GameObject:
   - component: {fileID: 933598367}
   - component: {fileID: 933598369}
   - component: {fileID: 933598368}
+  - component: {fileID: 933598371}
+  - component: {fileID: 933598370}
   m_Layer: 0
   m_Name: Content
   m_TagString: Untagged
@@ -1777,6 +1779,37 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 933598366}
   m_CullTransparentMesh: 1
+--- !u!114 &933598370
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 933598366}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5f2863727021cc4e96b54c9e26a8ab6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _group: {fileID: 933598371}
+  _boardCamera: {fileID: 1339813877}
+  _hoverArea: {fileID: 933598367}
+  _fadedAlpha: 0.35
+  _opaqueSize: 7
+  _fadedSize: 4
+  _fadeSpeed: 8
+--- !u!225 &933598371
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 933598366}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &946639129
 GameObject:
   m_ObjectHideFlags: 0
@@ -1791,6 +1824,8 @@ GameObject:
   - component: {fileID: 946639133}
   - component: {fileID: 946639132}
   - component: {fileID: 946639131}
+  - component: {fileID: 946639137}
+  - component: {fileID: 946639136}
   m_Layer: 0
   m_Name: BuildMenu
   m_TagString: Untagged
@@ -1929,6 +1964,37 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 946639129}
   m_CullTransparentMesh: 1
+--- !u!114 &946639136
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 946639129}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5f2863727021cc4e96b54c9e26a8ab6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _group: {fileID: 946639137}
+  _boardCamera: {fileID: 1339813877}
+  _hoverArea: {fileID: 946639130}
+  _fadedAlpha: 0.35
+  _opaqueSize: 7
+  _fadedSize: 4
+  _fadeSpeed: 8
+--- !u!225 &946639137
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 946639129}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &947635221
 GameObject:
   m_ObjectHideFlags: 0
@@ -2200,6 +2266,8 @@ GameObject:
   - component: {fileID: 1339813877}
   - component: {fileID: 1339813876}
   - component: {fileID: 1339813879}
+  - component: {fileID: 1339813880}
+  - component: {fileID: 1339813881}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -2306,6 +2374,47 @@ MonoBehaviour:
   m_RequiresDepthTexture: 0
   m_RequiresColorTexture: 0
   m_Version: 2
+--- !u!114 &1339813880
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1339813875}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c518083e9db3e6649a89fdd7a8f6d318, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _input: {fileID: 2021283946}
+  _camera: {fileID: 1339813877}
+  _minSize: 3
+  _maxSize: 7
+  _stepPerNotch: 0.75
+  _smoothTime: 0.12
+  _zoomToCursor: 1
+  _targetSize: 0
+  _velocity: 0
+--- !u!114 &1339813881
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1339813875}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 00bda414ec8200449b10ce6504524db7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _input: {fileID: 2021283946}
+  _camera: {fileID: 1339813877}
+  _minSize: 2
+  _maxSize: 7
+  _stepPerNotch: 0.75
+  _smoothTime: 0.12
+  _zoomToCursor: 1
+  _dragPan: 1
 --- !u!1 &1535886038
 GameObject:
   m_ObjectHideFlags: 0

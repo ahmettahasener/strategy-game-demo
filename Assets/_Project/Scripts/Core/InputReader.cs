@@ -21,6 +21,12 @@ namespace StrategyDemo.Core
         /// <summary>Pointer position projected into world space (2D plane).</summary>
         public Vector2 PointerWorldPosition { get; private set; }
 
+        /// <summary>Mouse-wheel delta this frame; positive scrolls up (zoom in), negative zooms out.</summary>
+        public float ZoomDelta { get; private set; }
+
+        /// <summary>True while the middle mouse button is held (drag-pan the camera).</summary>
+        public bool PanHeld { get; private set; }
+
         private void Awake()
         {
             if (_camera == null)
@@ -36,6 +42,9 @@ namespace StrategyDemo.Core
             {
                 PointerWorldPosition = _camera.ScreenToWorldPoint(screenPosition);
             }
+
+            ZoomDelta = Input.mouseScrollDelta.y;
+            PanHeld = Input.GetMouseButton(2);
 
             if (Input.GetMouseButtonDown(0))
             {

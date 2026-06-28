@@ -17,6 +17,10 @@ namespace StrategyDemo.Core
 
         private readonly Pathfinder _pathfinder = new Pathfinder();
         private GridModel _model;
+        private Bounds _worldBounds;
+
+        /// <summary>World-space rectangle the board occupies — used to keep the camera over the board.</summary>
+        public Bounds WorldBounds => _worldBounds;
 
         protected override void Awake()
         {
@@ -79,6 +83,13 @@ namespace StrategyDemo.Core
             BoundsInt bounds = _groundTilemap.cellBounds;
             _model = new GridModel(
                 new Vector2Int(bounds.xMin, bounds.yMin), bounds.size.x, bounds.size.y);
+
+            // Board rectangle in world space: cellBounds.max is one past the last cell, so its world
+            // position is the board's far corner.
+            Vector3 min = _groundTilemap.CellToWorld(bounds.min);
+            Vector3 max = _groundTilemap.CellToWorld(bounds.max);
+            _worldBounds = new Bounds();
+            _worldBounds.SetMinMax(min, max);
         }
     }
 }
