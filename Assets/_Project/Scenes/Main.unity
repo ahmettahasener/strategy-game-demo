@@ -2402,6 +2402,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _input: {fileID: 2021283946}
   _placement: {fileID: 765423069}
+  _commandMarkerSprite: {fileID: 21300000, guid: 6d21be5ddbb312a448645e4d5aaf5920, type: 3}
+  _commandMarkerColor: {r: 0.35, g: 0.85, b: 1, a: 0.9}
+  _commandMarkerDuration: 0.4
+  _commandMarkerStartScale: 0.35
+  _commandMarkerEndScale: 0.1
+  _commandMarkerSortingOrder: 4
 --- !u!4 &1641509044
 Transform:
   m_ObjectHideFlags: 0
