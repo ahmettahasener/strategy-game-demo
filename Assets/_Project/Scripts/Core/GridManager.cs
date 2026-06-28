@@ -22,6 +22,12 @@ namespace StrategyDemo.Core
         /// <summary>World-space rectangle the board occupies — used to keep the camera over the board.</summary>
         public Bounds WorldBounds => _worldBounds;
 
+        /// <summary>Board width in cells.</summary>
+        public int Width => _model.Width;
+
+        /// <summary>Board height in cells.</summary>
+        public int Height => _model.Height;
+
         protected override void Awake()
         {
             base.Awake();

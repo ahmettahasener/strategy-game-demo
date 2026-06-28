@@ -12,9 +12,6 @@ namespace StrategyDemo.Core
     /// </summary>
     public sealed class ProductionManager : Singleton<ProductionManager>
     {
-        // Rings searched outward from the spawn cell before giving up and stacking on it.
-        private const int MaxSpawnSearchRadius = 6;
-
         [SerializeField] private Transform _unitsRoot; // parent for produced units (hierarchy tidiness)
 
         private readonly UnitFactory _unitFactory = new UnitFactory();
@@ -49,13 +46,22 @@ namespace StrategyDemo.Core
             // the producer's spawn point that is on the board, clear of buildings, and not already
             // holding a unit. Units don't occupy the grid (that would turn them into pathfinding
             // obstacles), so a light physics probe — not grid occupancy — decides if a cell is taken.
-            Vector2Int openCell = FindOpenSpawnCell(spawnCell);
-            Vector3 spawnPosition = GridManager.Instance.CellToWorldCenter(openCell);
+            Vector2Int? openCell = FindOpenSpawnCell(spawnCell);
+            if (openCell == null)
+            {
+                // Every cell is under a building or already holds a unit — reject the order and signal
+                // feedback (denial SFX / UI) instead of stacking units invisibly on one cell.
+                GameEvents.RaiseActionDenied();
+                return null;
+            }
+
+            Vector3 spawnPosition = GridManager.Instance.CellToWorldCenter(openCell.Value);
             return _unitFactory.Create(unit, spawnPosition, Faction.Player, _unitsRoot);
         }
 
-        // First open cell at or around the spawn point, by expanding Chebyshev rings (nearest first).
-        private Vector2Int FindOpenSpawnCell(Vector2Int center)
+        // First open cell at or around the spawn point, by expanding Chebyshev rings (nearest first),
+        // or null when the whole board is full.
+        private Vector2Int? FindOpenSpawnCell(Vector2Int center)
         {
             // A burst of production can spawn several units in one frame; sync so the probe sees the
             // colliders of units placed earlier this frame.
@@ -67,7 +73,11 @@ namespace StrategyDemo.Core
                 return center;
             }
 
-            for (int radius = 1; radius <= MaxSpawnSearchRadius; radius++)
+            // Search outward across the whole board so units fill every reachable cell before it is
+            // declared full — max(Width, Height) rings reach the farthest corner from any spawn cell.
+            GridManager grid = GridManager.Instance;
+            int maxRadius = Mathf.Max(grid.Width, grid.Height);
+            for (int radius = 1; radius <= maxRadius; radius++)
             {
                 // Top and bottom edges of the ring (corners included here).
                 for (int x = center.x - radius; x <= center.x + radius; x++)
@@ -102,9 +112,7 @@ namespace StrategyDemo.Core
                 }
             }
 
-            // Board packed near the producer — fall back to the spawn cell rather than refusing to
-            // produce; instant/unlimited production must still hand back a unit.
-            return center;
+            return null; // no open cell anywhere — the board is full
         }
 
         private static bool IsCellOpen(Vector2Int cell, float probeRadius)
