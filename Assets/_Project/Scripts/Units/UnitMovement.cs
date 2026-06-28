@@ -44,6 +44,7 @@ namespace StrategyDemo.Units
 
             Stop();
             _moveRoutine = StartCoroutine(FollowPath(Simplify(path)));
+            _unit.SetWalking(true);
             return true;
         }
 
@@ -55,6 +56,8 @@ namespace StrategyDemo.Units
                 StopCoroutine(_moveRoutine);
                 _moveRoutine = null;
             }
+
+            _unit.SetWalking(false);
         }
 
         private IEnumerator FollowPath(List<Vector2Int> waypoints)
@@ -75,6 +78,7 @@ namespace StrategyDemo.Units
             }
 
             _moveRoutine = null;
+            _unit.SetWalking(false);
         }
 
         // Collapse straight runs into direction-change waypoints so movement is smooth.

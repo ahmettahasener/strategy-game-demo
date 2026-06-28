@@ -10,6 +10,10 @@ namespace StrategyDemo.Core
     /// </summary>
     public abstract class GameElement : MonoBehaviour, IDamageable, ISelectable
     {
+        [SerializeField] private Sprite _deathPoofSprite;
+        [SerializeField] private Color _deathPoofColor = new Color(1f, 0.95f, 0.8f, 0.9f);
+        [SerializeField, Range(0.2f, 3f)] private float _deathPoofScale = 1.1f;
+
         private int _currentHp;
         private bool _isDead;
         private bool _isSelected;
@@ -24,6 +28,9 @@ namespace StrategyDemo.Core
         public int CurrentHp => _currentHp;
         public bool IsDead => _isDead;
         public bool IsSelected => _isSelected;
+
+        /// <summary>True while the spawn-pop animation owns the transform scale.</summary>
+        protected bool IsSpawnPopping => _spawnPopRoutine != null;
         public Faction Faction { get; private set; } = Faction.Player;
 
         /// <summary>Sets HP to full. Called by the factory once the entity's data is injected.</summary>
@@ -151,7 +158,23 @@ namespace StrategyDemo.Core
             _isDead = true;
             GameEvents.RaiseEntityDied(this);
             OnDied();
+            PlayDeathPoof();
             StartCoroutine(DieRoutine());
+        }
+
+        // An independent burst at the entity's centre, sized to its sprite so a barracks pops bigger
+        // than a soldier. Outlives this object (which is about to be pooled/destroyed).
+        private void PlayDeathPoof()
+        {
+            if (_deathPoofSprite == null)
+            {
+                return;
+            }
+
+            var renderer = GetComponent<SpriteRenderer>();
+            Vector3 position = renderer != null ? renderer.bounds.center : transform.position;
+            float size = renderer != null ? renderer.bounds.size.x * _deathPoofScale : _deathPoofScale;
+            OneShotVfx.Play(_deathPoofSprite, position, _deathPoofColor, size, 0.3f, 25);
         }
 
         private IEnumerator DieRoutine()

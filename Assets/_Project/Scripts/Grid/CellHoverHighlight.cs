@@ -15,7 +15,7 @@ namespace StrategyDemo.Grid
         [SerializeField] private InputReader _input;
         [SerializeField] private PlacementController _placement;
         [SerializeField] private Sprite _sprite;
-        [SerializeField] private Color _color = new Color(1f, 1f, 1f, 0.16f);
+        [SerializeField] private Color _color = new Color(1f, 0.95f, 0.6f, 0.35f);
         [SerializeField] private int _sortingOrder = 1;
 
         private SpriteRenderer _renderer;

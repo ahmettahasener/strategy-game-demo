@@ -17,12 +17,14 @@ namespace StrategyDemo.UI
         [SerializeField] private int _sortingOrder = 20;
         [SerializeField] private Color _healthyColor = new Color(0.15f, 0.95f, 0.25f, 1f);
         [SerializeField] private Color _criticalColor = new Color(1f, 0.15f, 0.08f, 1f);
+        [SerializeField] private Color _ghostColor = new Color(1f, 1f, 1f, 0.8f);
 
         private GameElement _owner;
-        [SerializeField] private float _drainSpeed = 1.5f; // ratio units per second when HP drops
+        [SerializeField] private float _drainSpeed = 1.5f; // ratio units per second the ghost catches up
 
         private Transform _root;
         private SpriteRenderer _frame;
+        private SpriteRenderer _ghost;
         private SpriteRenderer _fill;
         private bool _isSelected;
         private float _displayedRatio = 1f;
@@ -124,7 +126,8 @@ namespace StrategyDemo.UI
             _root.SetParent(transform, false);
 
             _frame = CreateRenderer("Frame", _root, _frameSprite, _sortingOrder);
-            _fill = CreateRenderer("Fill", _root, _fillSprite, _sortingOrder + 1);
+            _ghost = CreateRenderer("Ghost", _root, _fillSprite, _sortingOrder + 1);
+            _fill = CreateRenderer("Fill", _root, _fillSprite, _sortingOrder + 2);
         }
 
         private static SpriteRenderer CreateRenderer(
@@ -146,10 +149,10 @@ namespace StrategyDemo.UI
                 return;
             }
 
-            // Visibility tracks real HP (and selection); the fill is drawn from the animated value so
-            // a draining bar stays visible until it has finished catching up.
-            float ratio = _displayedRatio;
-            bool shouldShow = !_owner.IsDead && (_isSelected || TargetRatio() < 0.999f || ratio < 0.999f);
+            // The front fill snaps to real HP; the ghost trails behind it (the animated value) so a
+            // hit shows a white sliver that catches up. Visibility stays on until the ghost lands.
+            float target = TargetRatio();
+            bool shouldShow = !_owner.IsDead && (_isSelected || target < 0.999f || _displayedRatio < 0.999f);
             SetVisible(shouldShow);
 
             if (!shouldShow)
@@ -163,9 +166,16 @@ namespace StrategyDemo.UI
 
             _root.localPosition = new Vector3(_worldOffset.x * invX, _worldOffset.y * invY, 0f);
             SetWorldSize(_frame, _worldSize);
-            SetWorldSize(_fill, new Vector2(_worldSize.x * ratio, _worldSize.y * 0.65f));
-            _fill.color = Color.Lerp(_criticalColor, _healthyColor, ratio);
-            _fill.transform.localPosition =
+            LayoutFill(_ghost, _displayedRatio, _ghostColor, invX);
+            LayoutFill(_fill, target, Color.Lerp(_criticalColor, _healthyColor, target), invX);
+        }
+
+        // Left-anchored horizontal fill of the given ratio.
+        private void LayoutFill(SpriteRenderer renderer, float ratio, Color color, float invX)
+        {
+            SetWorldSize(renderer, new Vector2(_worldSize.x * ratio, _worldSize.y * 0.65f));
+            renderer.color = color;
+            renderer.transform.localPosition =
                 new Vector3(-_worldSize.x * (1f - ratio) * 0.5f * invX, 0f, 0f);
         }
 

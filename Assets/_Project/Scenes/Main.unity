@@ -1655,6 +1655,57 @@ MonoBehaviour:
   _coolVariant: {r: 0.5424528, g: 1, b: 0.5424528, a: 1}
   _warmVariant: {r: 1, g: 0.96, b: 0.86, a: 1}
   _strength: 0.35
+--- !u!1 &871482295
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 871482297}
+  - component: {fileID: 871482296}
+  m_Layer: 0
+  m_Name: EntityHover
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &871482296
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 871482295}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 334fced7e105fa542a17877e04e9eca8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _input: {fileID: 2021283946}
+  _placement: {fileID: 765423069}
+  _ringSprite: {fileID: 21300000, guid: b18d23eb4b8d5dc4db2c5f7c25672f59, type: 3}
+  _color: {r: 1, g: 1, b: 1, a: 0.28}
+  _widthFactor: 1.05
+  _flatten: 0.5
+  _sortingOrder: 1
+--- !u!4 &871482297
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 871482295}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 17
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &910047591
 GameObject:
   m_ObjectHideFlags: 0
@@ -2392,15 +2443,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c518083e9db3e6649a89fdd7a8f6d318, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _input: {fileID: 2021283946}
-  _camera: {fileID: 1339813877}
-  _minSize: 3
-  _maxSize: 7
-  _stepPerNotch: 0.75
-  _smoothTime: 0.12
-  _zoomToCursor: 1
-  _targetSize: 0
-  _velocity: 0
 --- !u!114 &1339813881
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3198,7 +3240,7 @@ MonoBehaviour:
   _input: {fileID: 2021283946}
   _placement: {fileID: 765423069}
   _sprite: {fileID: 21300000, guid: 14e8e4a8b1e41ce4a8cdd38f6054e424, type: 3}
-  _color: {r: 1, g: 1, b: 1, a: 0.16}
+  _color: {r: 1, g: 1, b: 1, a: 0.6039216}
   _sortingOrder: 1
 --- !u!4 &2126883385
 Transform:

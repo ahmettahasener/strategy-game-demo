@@ -25,6 +25,9 @@ namespace StrategyDemo.Units
         // Flip the sprite to face its travel direction. Off for art that is drawn symmetric/front-on.
         [SerializeField] private bool _faceMovementDirection = true;
 
+        [SerializeField] private float _walkBobAmplitude = 0.045f;
+        [SerializeField] private float _walkBobFrequency = 5.5f; // steps per second
+
         // Optional selection-ring child. When assigned, selection is shown by toggling this ring instead
         // of tinting the sprite, so the unit art keeps its true colour. Falls back to the tint when null.
         // Its size/position are authored on the prefab (all unit sprites share size, so one setting fits all).
@@ -37,6 +40,8 @@ namespace StrategyDemo.Units
         private UnitData _data;
         private Coroutine _damageFlashRoutine;
         private Vector3 _lastBoardScale = Vector3.one;
+        private bool _isWalking;
+        private float _walkTime;
 
         public UnitData Data => _data;
 
@@ -96,6 +101,39 @@ namespace StrategyDemo.Units
             }
 
             _spriteRenderer.flipX = deltaX < 0f;
+        }
+
+        /// <summary>Toggles the walk "bob" (a subtle squash/stretch), driven by movement.</summary>
+        public void SetWalking(bool walking)
+        {
+            if (_isWalking == walking)
+            {
+                return;
+            }
+
+            _isWalking = walking;
+            _walkTime = 0f;
+            if (!walking && !IsDead && !IsSpawnPopping)
+            {
+                transform.localScale = _lastBoardScale; // settle back to the resting size
+            }
+        }
+
+        // Bob the visual via a small squash/stretch — the sprite is on the root, so this avoids
+        // touching the logical position that movement/pathing drive. Yields to spawn-pop and death.
+        private void LateUpdate()
+        {
+            if (!_isWalking || IsDead || IsSpawnPopping)
+            {
+                return;
+            }
+
+            _walkTime += Time.deltaTime;
+            float step = Mathf.Abs(Mathf.Sin(_walkTime * _walkBobFrequency * Mathf.PI));
+            float squashY = 1f - step * _walkBobAmplitude;
+            float stretchX = 1f + step * _walkBobAmplitude * 0.6f;
+            transform.localScale = new Vector3(
+                _lastBoardScale.x * stretchX, _lastBoardScale.y * squashY, _lastBoardScale.z);
         }
 
         protected override void SetHighlight(bool isOn)
