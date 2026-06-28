@@ -51,6 +51,12 @@ namespace StrategyDemo.Buildings
         public Vector2Int SpawnCell =>
             _footprintOrigin + (_data != null ? _data.SpawnPointOffset : Vector2Int.zero);
 
+        /// <summary>Bottom-left grid cell of the building's footprint (read-only; for combat targeting).</summary>
+        public Vector2Int FootprintOrigin => _footprintOrigin;
+
+        /// <summary>Footprint size in cells (read-only; for combat targeting).</summary>
+        public Vector2Int FootprintSize => _data != null ? _data.Size : Vector2Int.one;
+
         private void Awake()
         {
             _spriteRenderer = GetComponent<SpriteRenderer>();

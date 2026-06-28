@@ -19,4 +19,4 @@ MonoBehaviour:
   _maxHp: 10
   _attackDamage: 2
   _moveSpeed: 3
-  _attackRange: 1.5
+  _attackRangeCells: 1
