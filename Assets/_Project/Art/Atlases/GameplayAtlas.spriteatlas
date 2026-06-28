@@ -59,6 +59,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 33e1a3cdf9700574caef6323218a4dfc, type: 3}
   - {fileID: 21300000, guid: 9d71ad9ea1ba3354ba115db1fd2146f5, type: 3}
   - {fileID: 21300000, guid: a89f13beab9f9204491ec5dc4586591a, type: 3}
+  - {fileID: 21300000, guid: 0f1778befbd04fa439da7e5157525e2c, type: 3}
   - {fileID: 21300000, guid: b696e72f8801bae4aa741ea71876ffe4, type: 3}
   - {fileID: 21300000, guid: 23e63a6fec6a78d4ea69f159aa2837a6, type: 3}
   m_PackedSpriteNamesToIndex:
@@ -83,6 +84,7 @@ SpriteAtlas:
   - spr_manawell
   - spr_archer
   - tile_placement_valid
+  - fx_path_dot
   - spr_barracks
   - spr_squire
   m_RenderDataMap: {}

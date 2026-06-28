@@ -14,6 +14,14 @@ namespace StrategyDemo.Units
     {
         private UnitElement _unit;
         private Coroutine _moveRoutine;
+        private List<Vector2Int> _lastPath;
+
+        /// <summary>
+        /// The full cell-by-cell path of the most recent successful <see cref="MoveTo"/> (start cell
+        /// first, target last). Exposed so command feedback can draw the route / orient the marker
+        /// without re-running A*. Null until the first move.
+        /// </summary>
+        public IReadOnlyList<Vector2Int> LastPath => _lastPath;
 
         private void Awake()
         {
@@ -43,6 +51,7 @@ namespace StrategyDemo.Units
             }
 
             Stop();
+            _lastPath = path;
             _moveRoutine = StartCoroutine(FollowPath(Simplify(path)));
             _unit.SetWalking(true);
             return true;

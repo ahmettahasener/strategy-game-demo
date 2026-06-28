@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using StrategyDemo.Core;
 using StrategyDemo.Grid;
 using UnityEngine;
@@ -21,8 +22,20 @@ namespace StrategyDemo.Units
         [SerializeField] private float _commandMarkerEndScale = 0.9f;
         [SerializeField] private int _commandMarkerSortingOrder = 4;
 
+        [Header("Path trail")]
+        [SerializeField] private Sprite _pathDotSprite;
+        [SerializeField] private Color _pathDotColor = new Color(1f, 0.85f, 0.2f, 1f);
+        [SerializeField] private float _pathDotSize = 0.28f;
+        [SerializeField] private int _pathDotSortingOrder = 3;
+        [SerializeField] private float _pathFadeDuration = 0.3f;
+        [SerializeField] private float _dotReachRadius = 0.45f;
+
         private SpriteRenderer _commandMarker;
         private Coroutine _commandMarkerRoutine;
+
+        private readonly List<SpriteRenderer> _pathDots = new List<SpriteRenderer>();
+        private Coroutine _pathRoutine;
+        private int _activeDotCount;
 
         private void OnEnable()
         {
@@ -42,6 +55,14 @@ namespace StrategyDemo.Units
             {
                 _commandMarker.gameObject.SetActive(false);
             }
+
+            if (_pathRoutine != null)
+            {
+                StopCoroutine(_pathRoutine);
+                _pathRoutine = null;
+            }
+
+            ClearPathTrail();
         }
 
         private void OnSecondaryPressed()
@@ -69,18 +90,35 @@ namespace StrategyDemo.Units
             if (combat != null && combat.CanAttack(target))
             {
                 combat.Attack(target);
-                ShowCommandMarker(target.transform.position);
+                ClearPathTrail();
+                ShowCommandMarker(target.transform.position, 0f);
             }
             else
             {
                 // Move order: cancel any ongoing attack, then walk to the clicked cell.
                 combat?.StopCombat();
                 Vector2Int targetCell = GridManager.Instance.WorldToCell(_input.PointerWorldPosition);
-                if (unit.GetComponent<UnitMovement>()?.MoveTo(targetCell) == true)
+                var movement = unit.GetComponent<UnitMovement>();
+                if (movement != null && movement.MoveTo(targetCell))
                 {
-                    ShowCommandMarker(GridManager.Instance.CellToWorldCenter(targetCell));
+                    IReadOnlyList<Vector2Int> path = movement.LastPath;
+                    ShowCommandMarker(GridManager.Instance.CellToWorldCenter(targetCell), EntryAngle(path));
+                    ShowPathTrail(path, movement);
                 }
             }
+        }
+
+        // Angle (degrees) of the unit's final step into the target, so the marker — a sprite that
+        // points +X natively — faces the way the unit arrives (e.g. enters from below → points up).
+        private static float EntryAngle(IReadOnlyList<Vector2Int> path)
+        {
+            if (path == null || path.Count < 2)
+            {
+                return 0f;
+            }
+
+            Vector2Int step = path[path.Count - 1] - path[path.Count - 2];
+            return Mathf.Atan2(step.y, step.x) * Mathf.Rad2Deg;
         }
 
         private GameElement EntityUnderPointer()
@@ -89,7 +127,7 @@ namespace StrategyDemo.Units
             return hit != null ? hit.GetComponent<GameElement>() : null;
         }
 
-        private void ShowCommandMarker(Vector3 position)
+        private void ShowCommandMarker(Vector3 position, float rotationZ)
         {
             if (_commandMarkerSprite == null)
             {
@@ -103,6 +141,7 @@ namespace StrategyDemo.Units
             }
 
             _commandMarker.transform.position = new Vector3(position.x, position.y, 0f);
+            _commandMarker.transform.rotation = Quaternion.Euler(0f, 0f, rotationZ);
             _commandMarker.gameObject.SetActive(true);
             _commandMarkerRoutine = StartCoroutine(CommandMarkerRoutine());
         }
@@ -141,6 +180,110 @@ namespace StrategyDemo.Units
 
             _commandMarker.gameObject.SetActive(false);
             _commandMarkerRoutine = null;
+        }
+
+        // Lays a dot on each cell between the unit and its target, so the player can see the route the
+        // unit will walk. Dots stay lit while the unit travels, then fade out (see PathTrailRoutine).
+        // One pooled renderer per cell, all using the same atlas dot sprite — no per-order allocation.
+        private void ShowPathTrail(IReadOnlyList<Vector2Int> path, UnitMovement movement)
+        {
+            if (_pathRoutine != null)
+            {
+                StopCoroutine(_pathRoutine);
+                _pathRoutine = null;
+            }
+
+            // path[0] is the cell the unit stands on and the last cell gets the command marker, so the
+            // dots cover only the cells strictly in between.
+            int dotCount = _pathDotSprite != null && path != null ? Mathf.Max(0, path.Count - 2) : 0;
+            for (int i = 0; i < dotCount; i++)
+            {
+                SpriteRenderer dot = GetPathDot(i);
+                dot.transform.position = GridManager.Instance.CellToWorldCenter(path[i + 1]);
+                dot.color = _pathDotColor;
+                dot.enabled = true;
+            }
+
+            for (int i = dotCount; i < _pathDots.Count; i++)
+            {
+                _pathDots[i].enabled = false;
+            }
+
+            _activeDotCount = dotCount;
+            if (dotCount > 0)
+            {
+                _pathRoutine = StartCoroutine(PathTrailRoutine(movement));
+            }
+        }
+
+        // Keeps only the dots ahead of the unit lit: as the unit reaches each dot (front of the trail),
+        // that dot switches off, so the breadcrumb shrinks toward the target. Whatever is still ahead
+        // when the unit stops fades out together.
+        private IEnumerator PathTrailRoutine(UnitMovement movement)
+        {
+            int passed = 0;
+            float reachSqr = _dotReachRadius * _dotReachRadius;
+            while (movement != null && movement.IsMoving)
+            {
+                Vector3 unitPosition = movement.transform.position;
+                while (passed < _activeDotCount
+                    && (unitPosition - _pathDots[passed].transform.position).sqrMagnitude <= reachSqr)
+                {
+                    _pathDots[passed].enabled = false;
+                    passed++;
+                }
+
+                yield return null;
+            }
+
+            float elapsed = 0f;
+            while (elapsed < _pathFadeDuration)
+            {
+                elapsed += Time.deltaTime;
+                float alpha = _pathDotColor.a * (1f - Mathf.Clamp01(elapsed / _pathFadeDuration));
+                for (int i = 0; i < _pathDots.Count; i++)
+                {
+                    if (!_pathDots[i].enabled)
+                    {
+                        continue;
+                    }
+
+                    Color color = _pathDotColor;
+                    color.a = alpha;
+                    _pathDots[i].color = color;
+                }
+
+                yield return null;
+            }
+
+            ClearPathTrail();
+            _pathRoutine = null;
+        }
+
+        private SpriteRenderer GetPathDot(int index)
+        {
+            if (index < _pathDots.Count)
+            {
+                return _pathDots[index];
+            }
+
+            var dotObject = new GameObject("PathDot");
+            dotObject.transform.SetParent(transform, false);
+            var dot = dotObject.AddComponent<SpriteRenderer>();
+            dot.sprite = _pathDotSprite;
+            dot.sortingOrder = _pathDotSortingOrder;
+            float native = Mathf.Max(0.0001f, _pathDotSprite.bounds.size.x);
+            dot.transform.localScale = Vector3.one * (_pathDotSize / native);
+            _pathDots.Add(dot);
+            return dot;
+        }
+
+        private void ClearPathTrail()
+        {
+            for (int i = 0; i < _pathDots.Count; i++)
+            {
+                _pathDots[i].enabled = false;
+            }
         }
     }
 }

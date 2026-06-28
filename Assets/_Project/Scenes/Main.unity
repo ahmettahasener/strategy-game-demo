@@ -2599,6 +2599,12 @@ MonoBehaviour:
   _commandMarkerStartScale: 0.35
   _commandMarkerEndScale: 0.1
   _commandMarkerSortingOrder: 4
+  _pathDotSprite: {fileID: 21300000, guid: 0f1778befbd04fa439da7e5157525e2c, type: 3}
+  _pathDotColor: {r: 1, g: 0.85, b: 0.2, a: 1}
+  _pathDotSize: 0.28
+  _pathDotSortingOrder: 3
+  _pathFadeDuration: 0.3
+  _dotReachRadius: 0.45
 --- !u!4 &1641509044
 Transform:
   m_ObjectHideFlags: 0
@@ -3240,7 +3246,7 @@ MonoBehaviour:
   _input: {fileID: 2021283946}
   _placement: {fileID: 765423069}
   _sprite: {fileID: 21300000, guid: 14e8e4a8b1e41ce4a8cdd38f6054e424, type: 3}
-  _color: {r: 1, g: 1, b: 1, a: 0.6039216}
+  _color: {r: 1, g: 0.95, b: 0.6, a: 0.35}
   _sortingOrder: 1
 --- !u!4 &2126883385
 Transform:
