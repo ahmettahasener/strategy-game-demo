@@ -36,15 +36,23 @@ namespace StrategyDemo.Units
         /// <summary>Orders this unit to engage <paramref name="target"/>.</summary>
         public void Attack(GameElement target)
         {
-            // Enemy-only targeting is a combat-domain rule, not just an input concern: never engage
-            // a null/dead target, ourselves, or a same-faction ally.
-            if (target == null || target == _unit || target.IsDead || target.Faction == _unit.Faction)
+            if (!CanAttack(target))
             {
                 return;
             }
 
             StopCombat();
             _combatRoutine = StartCoroutine(CombatRoutine(target));
+        }
+
+        /// <summary>
+        /// Enemy-only targeting is a combat-domain rule, not just an input concern (Brief #10): a unit
+        /// may engage only a live entity of another faction — never a null/dead target, itself, or a
+        /// same-faction ally. Pure and side-effect free so it can be unit-tested without running combat.
+        /// </summary>
+        public bool CanAttack(GameElement target)
+        {
+            return target != null && target != _unit && !target.IsDead && target.Faction != _unit.Faction;
         }
 
         /// <summary>Cancels any ongoing attack (e.g. on a new move order).</summary>

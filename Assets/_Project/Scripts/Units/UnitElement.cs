@@ -5,9 +5,8 @@ using UnityEngine;
 namespace StrategyDemo.Units
 {
     /// <summary>
-    /// A produced soldier on the board. Supplies its stats from <see cref="UnitData"/>. Movement and
-    /// combat arrive in later slices; for now it spawns, takes damage and dies. No dynamic
-    /// Rigidbody2D — movement will be transform-based, so overlapping spawns can't cause a physics
+    /// A produced soldier on the board. Supplies its stats from <see cref="UnitData"/>. No dynamic
+    /// Rigidbody2D — movement is transform-based, so overlapping spawns can't cause a physics
     /// explosion.
     /// </summary>
     [RequireComponent(typeof(SpriteRenderer))]

@@ -8,8 +8,7 @@ namespace StrategyDemo.Core
     /// <summary>
     /// Drives instant, unlimited unit production (Brief #4, #9): given a producer and a unit it can
     /// make, spawns the unit at the producer's spawn cell via the <see cref="UnitFactory"/>. The
-    /// producer is supplied by the caller — a debug trigger now, the selected building once the
-    /// Selection/Info-Panel slice exists.
+    /// producer is supplied by the caller (the selected building).
     /// </summary>
     public sealed class ProductionManager : Singleton<ProductionManager>
     {
