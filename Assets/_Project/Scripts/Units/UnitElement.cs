@@ -17,6 +17,11 @@ namespace StrategyDemo.Units
         [SerializeField] private Color _highlightTint = Color.yellow;
         [SerializeField] private Color _enemyTint = new Color(1f, 0.4f, 0.4f);
 
+        // Optional selection-ring child. When assigned, selection is shown by toggling this ring instead
+        // of tinting the sprite, so the unit art keeps its true colour. Falls back to the tint when null.
+        // Its size/position are authored on the prefab (all unit sprites share size, so one setting fits all).
+        [SerializeField] private GameObject _selectionRing;
+
         private SpriteRenderer _spriteRenderer;
         private BoxCollider2D _collider;
         private Color _originalColor;
@@ -53,12 +58,19 @@ namespace StrategyDemo.Units
             FitColliderToSprite();
             SetFaction(faction);
             _baseColor = faction == Faction.Enemy ? _enemyTint : _originalColor;
-            OnDeselected(); // clears stale selection state and applies the base colour
+            _spriteRenderer.color = _baseColor; // apply faction colour directly: with a ring, SetHighlight no longer sets it
+            OnDeselected(); // clears stale selection state (ring off / base colour)
             ResetHealth();
         }
 
         protected override void SetHighlight(bool isOn)
         {
+            if (_selectionRing != null)
+            {
+                _selectionRing.SetActive(isOn);
+                return;
+            }
+
             _spriteRenderer.color = isOn ? _highlightTint : _baseColor;
         }
 
