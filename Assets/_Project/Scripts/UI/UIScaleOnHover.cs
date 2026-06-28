@@ -36,8 +36,11 @@ namespace StrategyDemo.UI
 
         private void Update()
         {
+            // Ignore hover/press feedback while the camera is being drag-panned (middle mouse), so
+            // sweeping the cursor across cards during a pan doesn't make them react.
+            float target = Input.GetMouseButton(2) ? 1f : _target;
             float current = transform.localScale.x / Mathf.Max(0.0001f, _baseScale.x);
-            float next = Mathf.MoveTowards(current, _target, _speed * Time.deltaTime);
+            float next = Mathf.MoveTowards(current, target, _speed * Time.deltaTime);
             transform.localScale = _baseScale * next;
         }
 

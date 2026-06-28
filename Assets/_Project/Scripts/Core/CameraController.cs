@@ -28,8 +28,12 @@ namespace StrategyDemo.Core
 
         [Header("Pan")]
         [SerializeField] private bool _dragPan = true;
+        [Tooltip("Extra horizontal pan past the board, as a fraction of the view half-width, so the player " +
+                 "can see board hidden behind the side panels. Only applies while zoomed in enough to pan.")]
+        [SerializeField, Range(0f, 1f)] private float _horizontalOverscroll = 0.5f;
 
         private float _targetSize;
+        private float _homeSize; // the starting (default) framing, restored by ResetView
         private float _velocity;
         private bool _isPanning;
         private Vector2 _panGrabWorld; // world point grabbed when the drag started
@@ -42,10 +46,28 @@ namespace StrategyDemo.Core
             }
 
             _targetSize = Mathf.Clamp(_camera.orthographicSize, _minSize, _maxSize);
+            _homeSize = _targetSize;
+        }
+
+        /// <summary>The default (starting) orthographic size — the framing <see cref="ResetView"/> returns to.</summary>
+        public float HomeSize => _homeSize;
+
+        /// <summary>
+        /// Eases the camera back to the default framing (and, via the clamp, recentres on the board).
+        /// Bound to the Space key so a reviewer who pans/zooms away can always get back to a clean view.
+        /// </summary>
+        public void ResetView()
+        {
+            _targetSize = _homeSize;
         }
 
         private void Update()
         {
+            if (_input != null && _input.ResetViewPressed)
+            {
+                ResetView();
+            }
+
             if (_input != null && !Mathf.Approximately(_input.ZoomDelta, 0f))
             {
                 // Scroll up (positive) zooms in, which means a smaller orthographic size.
@@ -113,16 +135,23 @@ namespace StrategyDemo.Core
             float halfHeight = size;
             float halfWidth = size * _camera.aspect;
 
-            position.x = ClampAxis(position.x, board.min.x, board.max.x, halfWidth, board.center.x);
-            position.y = ClampAxis(position.y, board.min.y, board.max.y, halfHeight, board.center.y);
+            // Horizontal gets an overscroll margin so the player can pull board out from behind the side
+            // panels; vertical stays hard-clamped to the board (no margin).
+            position.x = ClampAxis(
+                position.x, board.min.x, board.max.x, halfWidth, board.center.x, halfWidth * _horizontalOverscroll);
+            position.y = ClampAxis(position.y, board.min.y, board.max.y, halfHeight, board.center.y, 0f);
             return position;
         }
 
-        private static float ClampAxis(float value, float min, float max, float halfExtent, float center)
+        private static float ClampAxis(
+            float value, float min, float max, float halfExtent, float center, float overscroll)
         {
-            float low = min + halfExtent;
-            float high = max - halfExtent;
-            return low <= high ? Mathf.Clamp(value, low, high) : center;
+            // How far the camera centre may sit from the board centre: the slack the board gives over the
+            // view, plus the overscroll margin. Folding overscroll into one continuous value (instead of
+            // a separate "centre when the view is wider" branch) keeps panning smooth across the point
+            // where the view grows past the board — no sudden snap back to centre while zooming/panning.
+            float halfRange = (max - min) * 0.5f - halfExtent + overscroll;
+            return halfRange > 0f ? Mathf.Clamp(value, center - halfRange, center + halfRange) : center;
         }
     }
 }

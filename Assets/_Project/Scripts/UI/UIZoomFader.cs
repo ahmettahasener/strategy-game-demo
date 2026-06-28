@@ -1,4 +1,6 @@
+using StrategyDemo.Core;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace StrategyDemo.UI
 {
@@ -15,11 +17,14 @@ namespace StrategyDemo.UI
         [SerializeField] private Camera _boardCamera;
         [SerializeField] private RectTransform _hoverArea; // pointer here keeps the panel opaque
         [SerializeField, Range(0f, 1f)] private float _fadedAlpha = 0.35f;
-        [SerializeField] private float _opaqueSize = 7f;   // ortho size at/above which the panel is full
+        [SerializeField] private float _opaqueSize = 7f;   // fallback opaque size if no CameraController
         [SerializeField] private float _fadedSize = 4f;    // ortho size at/below which the panel is dimmest
         [SerializeField] private float _fadeSpeed = 8f;
 
         private Canvas _canvas;
+        private ScrollRect _scrollRect; // disabled during a drag-pan so the list can't scroll under it
+        private CameraController _cameraController; // its HomeSize is the "fully opaque" point, so the
+                                                    // panels are solid at the default view and only fade in
         private bool _draggingFromPanel; // a press that began over the panel is still held (e.g. scrolling)
 
         private void Awake()
@@ -39,13 +44,31 @@ namespace StrategyDemo.UI
                 _boardCamera = Camera.main;
             }
 
+            if (_boardCamera != null)
+            {
+                _cameraController = _boardCamera.GetComponent<CameraController>();
+            }
+
             _canvas = GetComponentInParent<Canvas>();
+            _scrollRect = GetComponentInChildren<ScrollRect>(true);
         }
 
         private void Update()
         {
             UpdateDragState();
-            _group.alpha = Mathf.MoveTowards(_group.alpha, TargetAlpha(), _fadeSpeed * Time.deltaTime);
+            bool panning = Input.GetMouseButton(2);
+            // Disable the panel's controls while drag-panning so a click that lands on it mid-pan can't
+            // accidentally pick a building card; restored as soon as the pan is released.
+            _group.interactable = !panning;
+
+            // interactable only gates Selectables (buttons), not the ScrollRect's drag/wheel scrolling,
+            // so disable the scroll view too — keeping blocksRaycasts on, so the click is still absorbed
+            // rather than leaking through to the board.
+            if (_scrollRect != null)
+            {
+                _scrollRect.enabled = !panning;
+            }
+            _group.alpha = Mathf.MoveTowards(_group.alpha, TargetAlpha(panning), _fadeSpeed * Time.deltaTime);
         }
 
         // A drag that starts on the panel (e.g. flick-scrolling the build menu) keeps it opaque even
@@ -62,9 +85,12 @@ namespace StrategyDemo.UI
             }
         }
 
-        private float TargetAlpha()
+        private float TargetAlpha(bool panning)
         {
-            if (_draggingFromPanel || IsPointerOver())
+            // While drag-panning the camera (middle mouse held), don't pop the panel back to opaque just
+            // because the cursor swept over it — keep it faded until the pan is released, so it stays out
+            // of the way during the drag.
+            if (!panning && (_draggingFromPanel || IsPointerOver()))
             {
                 return 1f;
             }
@@ -74,8 +100,11 @@ namespace StrategyDemo.UI
                 return 1f;
             }
 
-            // 1 when zoomed out (size >= opaque), down to _fadedAlpha when zoomed in (size <= faded).
-            float t = Mathf.InverseLerp(_fadedSize, _opaqueSize, _boardCamera.orthographicSize);
+            // Fully opaque at the default framing (and zoomed further out), fading in only as the camera
+            // zooms past it. Using the camera's home size as the opaque point means the default view is
+            // always solid, regardless of the panel's authored fade values.
+            float opaqueSize = _cameraController != null ? _cameraController.HomeSize : _opaqueSize;
+            float t = Mathf.InverseLerp(_fadedSize, opaqueSize, _boardCamera.orthographicSize);
             return Mathf.Lerp(_fadedAlpha, 1f, t);
         }
 

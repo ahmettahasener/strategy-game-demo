@@ -27,6 +27,9 @@ namespace StrategyDemo.Core
         /// <summary>True while the middle mouse button is held (drag-pan the camera).</summary>
         public bool PanHeld { get; private set; }
 
+        /// <summary>True the frame the reset-view key (Space) is pressed.</summary>
+        public bool ResetViewPressed { get; private set; }
+
         private void Awake()
         {
             if (_camera == null)
@@ -45,6 +48,7 @@ namespace StrategyDemo.Core
 
             ZoomDelta = Input.mouseScrollDelta.y;
             PanHeld = Input.GetMouseButton(2);
+            ResetViewPressed = Input.GetKeyDown(KeyCode.Space);
 
             if (Input.GetMouseButtonDown(0))
             {
