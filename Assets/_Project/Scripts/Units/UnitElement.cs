@@ -1,3 +1,4 @@
+using System.Collections;
 using StrategyDemo.Core;
 using StrategyDemo.Data;
 using UnityEngine;
@@ -16,6 +17,9 @@ namespace StrategyDemo.Units
 
         [SerializeField] private Color _highlightTint = Color.yellow;
         [SerializeField] private Color _enemyTint = new Color(1f, 0.4f, 0.4f);
+        [SerializeField] private Color _damageFlashTint = new Color(1f, 0.2f, 0.15f);
+        [SerializeField] private float _damageFlashDuration = 0.08f;
+        [SerializeField] private float _deathAnimationDuration = 0.2f;
 
         // Optional selection-ring child. When assigned, selection is shown by toggling this ring instead
         // of tinting the sprite, so the unit art keeps its true colour. Falls back to the tint when null.
@@ -27,6 +31,8 @@ namespace StrategyDemo.Units
         private Color _originalColor;
         private Color _baseColor;
         private UnitData _data;
+        private Coroutine _damageFlashRoutine;
+        private Vector3 _lastBoardScale = Vector3.one;
 
         public UnitData Data => _data;
 
@@ -40,6 +46,15 @@ namespace StrategyDemo.Units
             _collider = GetComponent<BoxCollider2D>();
             _originalColor = _spriteRenderer.color;
             _baseColor = _originalColor;
+        }
+
+        private void OnDisable()
+        {
+            StopDamageFlash();
+            if (_spriteRenderer != null)
+            {
+                _spriteRenderer.color = _baseColor;
+            }
         }
 
         /// <summary>
@@ -74,6 +89,16 @@ namespace StrategyDemo.Units
             _spriteRenderer.color = isOn ? _highlightTint : _baseColor;
         }
 
+        protected override void OnDamaged()
+        {
+            if (_damageFlashRoutine != null)
+            {
+                StopCoroutine(_damageFlashRoutine);
+            }
+
+            _damageFlashRoutine = StartCoroutine(DamageFlashRoutine());
+        }
+
         // Scale to a consistent on-board size (uniform, aspect-preserving), independent of the art's
         // resolution / pixels-per-unit (sprite.bounds.size is the true unscaled world size).
         private void ApplyBoardScale()
@@ -86,6 +111,7 @@ namespace StrategyDemo.Units
             Vector2 native = _spriteRenderer.sprite.bounds.size;
             float scale = BoardSize / Mathf.Max(0.0001f, Mathf.Max(native.x, native.y));
             transform.localScale = new Vector3(scale, scale, 1f);
+            _lastBoardScale = transform.localScale;
         }
 
         // Match the click/selection collider to the sprite so the whole unit is clickable.
@@ -104,6 +130,73 @@ namespace StrategyDemo.Units
         protected override void RemoveFromBoard()
         {
             PoolManager.Instance.Release(gameObject);
+        }
+
+        protected override IEnumerator DeathAnimationRoutine()
+        {
+            yield return ScaleFadeOutRoutine();
+        }
+
+        private IEnumerator DamageFlashRoutine()
+        {
+            _spriteRenderer.color = _damageFlashTint;
+            yield return new WaitForSeconds(_damageFlashDuration);
+            _damageFlashRoutine = null;
+            RestoreSpriteColor();
+        }
+
+        private void StopDamageFlash()
+        {
+            if (_damageFlashRoutine == null)
+            {
+                return;
+            }
+
+            StopCoroutine(_damageFlashRoutine);
+            _damageFlashRoutine = null;
+        }
+
+        private void RestoreSpriteColor()
+        {
+            if (_selectionRing != null || !IsSelected)
+            {
+                _spriteRenderer.color = _baseColor;
+                return;
+            }
+
+            _spriteRenderer.color = _highlightTint;
+        }
+
+        private IEnumerator ScaleFadeOutRoutine()
+        {
+            StopDamageFlash();
+
+            Vector3 startScale = transform.localScale;
+            Color startColor = _spriteRenderer.color;
+            float elapsed = 0f;
+
+            if (_selectionRing != null)
+            {
+                _selectionRing.SetActive(false);
+            }
+
+            _spriteRenderer.color = _damageFlashTint;
+
+            while (elapsed < _deathAnimationDuration)
+            {
+                elapsed += Time.deltaTime;
+                float ratio = Mathf.Clamp01(elapsed / Mathf.Max(0.0001f, _deathAnimationDuration));
+                float eased = 1f - Mathf.Pow(1f - ratio, 2f);
+
+                transform.localScale = Vector3.Lerp(startScale, Vector3.zero, eased);
+                Color current = Color.Lerp(_damageFlashTint, startColor, ratio);
+                current.a = 1f - ratio;
+                _spriteRenderer.color = current;
+                yield return null;
+            }
+
+            transform.localScale = _lastBoardScale;
+            _spriteRenderer.color = _baseColor;
         }
     }
 }

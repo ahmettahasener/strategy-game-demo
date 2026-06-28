@@ -1,3 +1,4 @@
+using System.Collections;
 using StrategyDemo.Data;
 using UnityEngine;
 
@@ -47,6 +48,7 @@ namespace StrategyDemo.Core
 
             _currentHp = Mathf.Max(0, _currentHp - amount);
             GameEvents.RaiseHealthChanged(this);
+            OnDamaged();
 
             if (_currentHp == 0)
             {
@@ -69,9 +71,20 @@ namespace StrategyDemo.Core
         /// <summary>Visual selection feedback; concrete entities decide how to render it.</summary>
         protected abstract void SetHighlight(bool isOn);
 
+        /// <summary>Visual damage feedback; concrete entities decide how to render it.</summary>
+        protected virtual void OnDamaged()
+        {
+        }
+
         /// <summary>Hook for death visuals/SFX, run just before the object is removed.</summary>
         protected virtual void OnDied()
         {
+        }
+
+        /// <summary>Optional death animation; removal waits until this routine completes.</summary>
+        protected virtual IEnumerator DeathAnimationRoutine()
+        {
+            yield break;
         }
 
         /// <summary>
@@ -88,6 +101,12 @@ namespace StrategyDemo.Core
             _isDead = true;
             GameEvents.RaiseEntityDied(this);
             OnDied();
+            StartCoroutine(DieRoutine());
+        }
+
+        private IEnumerator DieRoutine()
+        {
+            yield return DeathAnimationRoutine();
             RemoveFromBoard();
         }
     }

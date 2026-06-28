@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using StrategyDemo.Core;
 using StrategyDemo.Data;
@@ -15,12 +16,16 @@ namespace StrategyDemo.Buildings
     {
         [SerializeField] private Color _highlightTint = Color.cyan;
         [SerializeField] private Color _enemyTint = new Color(1f, 0.4f, 0.4f);
+        [SerializeField] private Color _damageFlashTint = new Color(1f, 0.2f, 0.15f);
+        [SerializeField] private float _damageFlashDuration = 0.08f;
+        [SerializeField] private float _deathAnimationDuration = 0.24f;
 
         private SpriteRenderer _spriteRenderer;
         private BoxCollider2D _collider;
         private Color _baseColor;
         private BuildingData _data;
         private Vector2Int _footprintOrigin;
+        private Coroutine _damageFlashRoutine;
 
         public BuildingData Data => _data;
 
@@ -70,6 +75,16 @@ namespace StrategyDemo.Buildings
             _spriteRenderer.color = isOn ? _highlightTint : _baseColor;
         }
 
+        protected override void OnDamaged()
+        {
+            if (_damageFlashRoutine != null)
+            {
+                StopCoroutine(_damageFlashRoutine);
+            }
+
+            _damageFlashRoutine = StartCoroutine(DamageFlashRoutine());
+        }
+
         // Scale so the sprite spans its grid footprint exactly, independent of the art's
         // resolution / pixels-per-unit (sprite.bounds.size is the true unscaled world size).
         private void ApplyFootprintScale(Vector2Int size)
@@ -99,9 +114,56 @@ namespace StrategyDemo.Buildings
 
         protected override void OnDied()
         {
+            StopDamageFlash();
             if (GridManager.Instance != null && _data != null)
             {
                 GridManager.Instance.Free(_footprintOrigin, _data.Size);
+            }
+        }
+
+        protected override IEnumerator DeathAnimationRoutine()
+        {
+            yield return ScaleFadeOutRoutine();
+        }
+
+        private IEnumerator DamageFlashRoutine()
+        {
+            _spriteRenderer.color = _damageFlashTint;
+            yield return new WaitForSeconds(_damageFlashDuration);
+            _damageFlashRoutine = null;
+            _spriteRenderer.color = IsSelected ? _highlightTint : _baseColor;
+        }
+
+        private void StopDamageFlash()
+        {
+            if (_damageFlashRoutine == null)
+            {
+                return;
+            }
+
+            StopCoroutine(_damageFlashRoutine);
+            _damageFlashRoutine = null;
+        }
+
+        private IEnumerator ScaleFadeOutRoutine()
+        {
+            Vector3 startScale = transform.localScale;
+            Color startColor = _spriteRenderer.color;
+            float elapsed = 0f;
+
+            _spriteRenderer.color = _damageFlashTint;
+
+            while (elapsed < _deathAnimationDuration)
+            {
+                elapsed += Time.deltaTime;
+                float ratio = Mathf.Clamp01(elapsed / Mathf.Max(0.0001f, _deathAnimationDuration));
+                float eased = 1f - Mathf.Pow(1f - ratio, 2f);
+
+                transform.localScale = Vector3.Lerp(startScale, Vector3.zero, eased);
+                Color current = Color.Lerp(_damageFlashTint, startColor, ratio);
+                current.a = 1f - ratio;
+                _spriteRenderer.color = current;
+                yield return null;
             }
         }
     }
