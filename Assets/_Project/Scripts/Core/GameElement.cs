@@ -29,6 +29,7 @@ namespace StrategyDemo.Core
         {
             _currentHp = MaxHp;
             _isDead = false;
+            GameEvents.RaiseHealthChanged(this);
         }
 
         /// <summary>Assigns runtime allegiance (called by the factory at spawn/placement).</summary>

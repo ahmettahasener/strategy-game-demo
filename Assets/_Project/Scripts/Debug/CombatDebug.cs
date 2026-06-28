@@ -63,7 +63,6 @@ namespace StrategyDemo.DebugTools
             if (SelectionManager.Instance.Current is GameElement element)
             {
                 element.ResetHealth();
-                GameEvents.RaiseHealthChanged(element);
             }
         }
 

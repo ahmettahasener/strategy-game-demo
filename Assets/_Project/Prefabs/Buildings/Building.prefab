@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 8938743305089639623}
   - component: {fileID: 8277194244286364585}
   - component: {fileID: 1248439189674452197}
+  - component: {fileID: 870210033500200001}
   m_Layer: 0
   m_Name: Building
   m_TagString: Untagged
@@ -126,3 +127,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _highlightTint: {r: 0, g: 1, b: 1, a: 1}
   _enemyTint: {r: 1, g: 0.4, b: 0.4, a: 1}
+--- !u!114 &870210033500200001
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4630428369191215681}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6c292013bf3e49b4ba6a9ef3b0acd21e, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
+  _frameSprite: {fileID: 21300000, guid: 032d700dcebbe6140b41d54d2c153c36, type: 3}
+  _fillSprite: {fileID: 21300000, guid: 4a491cb48b412e941ba134aef5e5cf31, type: 3}
+  _worldSize: {x: 1.1, y: 0.16}
+  _worldOffset: {x: 0, y: 0.62}
+  _sortingOrder: 20
+  _healthyColor: {r: 0.15, g: 0.95, b: 0.25, a: 1}
+  _criticalColor: {r: 1, g: 0.15, b: 0.08, a: 1}
