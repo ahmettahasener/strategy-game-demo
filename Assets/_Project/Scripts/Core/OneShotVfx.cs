@@ -16,7 +16,7 @@ namespace StrategyDemo.Core
     public sealed class OneShotVfx : MonoBehaviour
     {
         private static readonly Stack<OneShotVfx> Pool = new Stack<OneShotVfx>();
-        private static Transform _container;
+        private static Transform _fallbackContainer;
 
         private SpriteRenderer _renderer;
         private Color _color;
@@ -63,16 +63,27 @@ namespace StrategyDemo.Core
                 }
             }
 
-            if (_container == null)
-            {
-                _container = new GameObject("OneShotVfxPool").transform;
-            }
-
             var go = new GameObject("Vfx");
-            go.transform.SetParent(_container, false);
+            go.transform.SetParent(Container(), false);
             var vfx = go.AddComponent<OneShotVfx>();
             vfx._renderer = go.AddComponent<SpriteRenderer>();
             return vfx;
+        }
+
+        // The authored VfxRoot when present, else a lazily-created root (so VFX still work without it).
+        private static Transform Container()
+        {
+            if (VfxRoot.Current != null)
+            {
+                return VfxRoot.Current;
+            }
+
+            if (_fallbackContainer == null)
+            {
+                _fallbackContainer = new GameObject("OneShotVfxPool").transform;
+            }
+
+            return _fallbackContainer;
         }
 
         private IEnumerator Run()

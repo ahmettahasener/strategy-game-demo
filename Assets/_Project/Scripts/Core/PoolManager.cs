@@ -15,8 +15,13 @@ namespace StrategyDemo.Core
         private readonly Dictionary<GameObject, Queue<GameObject>> _pools =
             new Dictionary<GameObject, Queue<GameObject>>();
 
-        /// <summary>An active instance of <paramref name="prefab"/> from its pool, creating one if empty.</summary>
-        public GameObject Get(GameObject prefab)
+        /// <summary>
+        /// An active instance of <paramref name="prefab"/> from its pool, creating one if empty.
+        /// When <paramref name="activeParent"/> is given the instance is moved under it while active
+        /// (e.g. a "UnitsRoot" container), so the live hierarchy stays readable; <see cref="Release"/>
+        /// returns it under the pool. A null parent leaves it under the pool (unchanged behaviour).
+        /// </summary>
+        public GameObject Get(GameObject prefab, Transform activeParent = null)
         {
             if (prefab == null)
             {
@@ -25,6 +30,11 @@ namespace StrategyDemo.Core
 
             Queue<GameObject> pool = GetPool(prefab);
             GameObject instance = pool.Count > 0 ? pool.Dequeue() : CreateInstance(prefab);
+            if (activeParent != null)
+            {
+                instance.transform.SetParent(activeParent, false);
+            }
+
             instance.SetActive(true);
             return instance;
         }
@@ -50,6 +60,7 @@ namespace StrategyDemo.Core
             }
 
             instance.SetActive(false);
+            instance.transform.SetParent(transform, false); // back under the pool, out of the active root
             GetPool(pooled.SourcePrefab).Enqueue(instance);
         }
 

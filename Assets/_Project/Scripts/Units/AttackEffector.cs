@@ -112,8 +112,9 @@ namespace StrategyDemo.Units
             _sparkRoutine = StartCoroutine(SparkRoutine());
         }
 
-        // A standalone (unparented) renderer so the spark stays at the target and isn't scaled by the
-        // attacker. Reused across hits to avoid per-hit instantiate/destroy churn.
+        // Lives under the identity-scale VfxRoot (not the attacker), so the spark stays at the target's
+        // world position and isn't scaled by the attacker, while keeping the scene root tidy. Reused
+        // across hits to avoid per-hit instantiate/destroy churn.
         private void EnsureSpark()
         {
             if (_spark != null)
@@ -122,6 +123,7 @@ namespace StrategyDemo.Units
             }
 
             var go = new GameObject("HitSpark");
+            go.transform.SetParent(VfxRoot.Current, false); // null VfxRoot leaves it unparented (still fine)
             _spark = go.AddComponent<SpriteRenderer>();
             _spark.sprite = _hitSparkSprite;
             _spark.color = _hitSparkColor;

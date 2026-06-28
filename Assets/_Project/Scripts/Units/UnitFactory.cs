@@ -12,10 +12,12 @@ namespace StrategyDemo.Units
     /// </summary>
     public sealed class UnitFactory
     {
-        public UnitElement Create(UnitData data, Vector3 worldPosition, Faction faction)
+        public UnitElement Create(
+            UnitData data, Vector3 worldPosition, Faction faction, Transform parent = null)
         {
-            GameObject instance = PoolManager.Instance.Get(data.Prefab);
+            GameObject instance = PoolManager.Instance.Get(data.Prefab, parent);
             instance.transform.SetPositionAndRotation(worldPosition, Quaternion.identity);
+            instance.name = $"{faction}_{data.DisplayName}";
             UnitElement unit = instance.GetComponent<UnitElement>();
             unit.Initialize(data, faction);
             return unit;

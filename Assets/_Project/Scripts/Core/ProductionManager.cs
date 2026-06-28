@@ -15,6 +15,8 @@ namespace StrategyDemo.Core
         // Rings searched outward from the spawn cell before giving up and stacking on it.
         private const int MaxSpawnSearchRadius = 6;
 
+        [SerializeField] private Transform _unitsRoot; // parent for produced units (hierarchy tidiness)
+
         private readonly UnitFactory _unitFactory = new UnitFactory();
 
         // Reused probe buffer so the spawn-cell occupancy check stays allocation-free.
@@ -49,7 +51,7 @@ namespace StrategyDemo.Core
             // obstacles), so a light physics probe — not grid occupancy — decides if a cell is taken.
             Vector2Int openCell = FindOpenSpawnCell(spawnCell);
             Vector3 spawnPosition = GridManager.Instance.CellToWorldCenter(openCell);
-            return _unitFactory.Create(unit, spawnPosition, Faction.Player);
+            return _unitFactory.Create(unit, spawnPosition, Faction.Player, _unitsRoot);
         }
 
         // First open cell at or around the spawn point, by expanding Chebyshev rings (nearest first).

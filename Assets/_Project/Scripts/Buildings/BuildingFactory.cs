@@ -12,10 +12,12 @@ namespace StrategyDemo.Buildings
     /// </summary>
     public sealed class BuildingFactory
     {
-        public BuildingElement Create(BuildingData data, Vector2Int footprintOrigin, Faction faction)
+        public BuildingElement Create(
+            BuildingData data, Vector2Int footprintOrigin, Faction faction, Transform parent = null)
         {
             Vector3 worldPosition = FootprintCenterWorld(footprintOrigin, data.Size);
-            GameObject instance = Object.Instantiate(data.Prefab, worldPosition, Quaternion.identity);
+            GameObject instance = Object.Instantiate(data.Prefab, worldPosition, Quaternion.identity, parent);
+            instance.name = $"{faction}_{data.DisplayName}";
             BuildingElement building = instance.GetComponent<BuildingElement>();
             building.Initialize(data, footprintOrigin, faction);
             return building;

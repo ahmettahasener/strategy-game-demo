@@ -15,6 +15,8 @@ namespace StrategyDemo.Scenario
     {
         [SerializeField] private BuildingSpawn[] _enemyBuildings;
         [SerializeField] private UnitSpawn[] _enemyUnits;
+        [SerializeField] private Transform _buildingsRoot; // parent for spawned enemy buildings
+        [SerializeField] private Transform _unitsRoot;      // parent for spawned enemy units
 
         private readonly BuildingFactory _buildingFactory = new BuildingFactory();
         private readonly UnitFactory _unitFactory = new UnitFactory();
@@ -67,7 +69,7 @@ namespace StrategyDemo.Scenario
                 return;
             }
 
-            _buildingFactory.Create(spawn.Data, spawn.FootprintOrigin, Faction.Enemy);
+            _buildingFactory.Create(spawn.Data, spawn.FootprintOrigin, Faction.Enemy, _buildingsRoot);
             GridManager.Instance.Occupy(spawn.FootprintOrigin, spawn.Data.Size);
         }
 
@@ -96,7 +98,7 @@ namespace StrategyDemo.Scenario
             }
 
             Vector3 worldPosition = GridManager.Instance.CellToWorldCenter(spawn.Cell);
-            _unitFactory.Create(spawn.Data, worldPosition, Faction.Enemy);
+            _unitFactory.Create(spawn.Data, worldPosition, Faction.Enemy, _unitsRoot);
         }
 
         [System.Serializable]

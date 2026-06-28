@@ -19,6 +19,8 @@ namespace StrategyDemo.DebugTools
         [SerializeField] private UnitData _enemyUnit;
         [SerializeField] private BuildingData _enemyBuilding;
         [SerializeField] private BoardGridOverlay _gridOverlay;
+        [SerializeField] private Transform _buildingsRoot; // keep debug-spawned enemies out of the scene root
+        [SerializeField] private Transform _unitsRoot;
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
         private readonly UnitFactory _unitFactory = new UnitFactory();
@@ -85,7 +87,7 @@ namespace StrategyDemo.DebugTools
 
             Vector2Int cell = GridManager.Instance.WorldToCell(_input.PointerWorldPosition);
             Vector3 world = GridManager.Instance.CellToWorldCenter(cell);
-            _unitFactory.Create(_enemyUnit, world, Faction.Enemy);
+            _unitFactory.Create(_enemyUnit, world, Faction.Enemy, _unitsRoot);
         }
 
         private void SpawnEnemyBuilding()
@@ -103,7 +105,7 @@ namespace StrategyDemo.DebugTools
                 return;
             }
 
-            _buildingFactory.Create(_enemyBuilding, origin, Faction.Enemy);
+            _buildingFactory.Create(_enemyBuilding, origin, Faction.Enemy, _buildingsRoot);
             GridManager.Instance.Occupy(origin, _enemyBuilding.Size);
         }
 #endif

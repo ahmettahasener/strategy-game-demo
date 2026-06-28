@@ -16,6 +16,7 @@ namespace StrategyDemo.Grid
     {
         [SerializeField] private InputReader _input;
         [SerializeField] private PlacementPreview _preview;
+        [SerializeField] private Transform _buildingsRoot; // parent for placed buildings (hierarchy tidiness)
 
         private readonly List<Vector2Int> _footprintBuffer = new List<Vector2Int>();
         private readonly BuildingFactory _buildingFactory = new BuildingFactory();
@@ -132,7 +133,7 @@ namespace StrategyDemo.Grid
         /// </summary>
         private void PlaceBuilding(BuildingData data, Vector2Int footprintOrigin)
         {
-            _buildingFactory.Create(data, footprintOrigin, Faction.Player);
+            _buildingFactory.Create(data, footprintOrigin, Faction.Player, _buildingsRoot);
             GridManager.Instance.Occupy(footprintOrigin, data.Size);
         }
 
