@@ -24,6 +24,12 @@ namespace StrategyDemo.Grid
 
         public bool IsPlacing => _isPlacing;
 
+        /// <summary>Raised when placement mode is entered (e.g. to emphasise the grid).</summary>
+        public event System.Action PlacementStarted;
+
+        /// <summary>Raised when placement mode ends (placed-and-exited or cancelled).</summary>
+        public event System.Action PlacementEnded;
+
         private void OnEnable()
         {
             _input.PrimaryPressed += OnPrimaryPressed;
@@ -48,14 +54,24 @@ namespace StrategyDemo.Grid
             // placement) can't also issue a move order to a still-selected unit.
             SelectionManager.Instance?.Deselect();
             _current = data;
+            bool wasPlacing = _isPlacing;
             _isPlacing = true;
+            if (!wasPlacing)
+            {
+                PlacementStarted?.Invoke();
+            }
         }
 
         public void CancelPlacement()
         {
+            bool wasPlacing = _isPlacing;
             _isPlacing = false;
             _current = null;
             _preview.Clear();
+            if (wasPlacing)
+            {
+                PlacementEnded?.Invoke();
+            }
         }
 
         private void Update()

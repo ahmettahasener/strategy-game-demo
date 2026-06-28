@@ -13,16 +13,69 @@ namespace StrategyDemo.Grid
         [SerializeField] private Vector2 _origin = Vector2.zero;
         [SerializeField, Min(1)] private int _width = 10;
         [SerializeField, Min(1)] private int _height = 10;
-        [SerializeField, Min(0.001f)] private float _lineThickness = 0.025f;
-        [SerializeField] private Color _color = new Color(0.08f, 0.18f, 0.08f, 0.35f);
+        [SerializeField, Min(0.001f)] private float _lineThickness = 0.02f;
+        [SerializeField] private Color _color = new Color(0.08f, 0.18f, 0.08f, 1f);
         [SerializeField] private int _sortingOrder = 1;
+
+        [Header("Placement emphasis")]
+        // Faint at rest so the board doesn't read like a spreadsheet; brighter while placing so the
+        // footprint is easy to align. Fades between the two when placement starts/ends.
+        [SerializeField] private PlacementController _placement;
+        [SerializeField, Range(0f, 1f)] private float _idleAlpha = 0.1f;
+        [SerializeField, Range(0f, 1f)] private float _activeAlpha = 0.45f;
+        [SerializeField] private float _fadeSpeed = 6f;
 
         private Mesh _mesh;
         private Material _material;
+        private float _targetAlpha;
+        private float _currentAlpha;
 
         private void Awake()
         {
+            _targetAlpha = _idleAlpha;
+            _currentAlpha = _idleAlpha;
             Build();
+        }
+
+        private void OnEnable()
+        {
+            if (_placement != null)
+            {
+                _placement.PlacementStarted += OnPlacementStarted;
+                _placement.PlacementEnded += OnPlacementEnded;
+            }
+        }
+
+        private void OnDisable()
+        {
+            if (_placement != null)
+            {
+                _placement.PlacementStarted -= OnPlacementStarted;
+                _placement.PlacementEnded -= OnPlacementEnded;
+            }
+        }
+
+        private void Update()
+        {
+            if (_material == null)
+            {
+                return;
+            }
+
+            _currentAlpha = Mathf.MoveTowards(_currentAlpha, _targetAlpha, _fadeSpeed * Time.deltaTime);
+            Color faded = _color;
+            faded.a = _currentAlpha;
+            _material.color = faded;
+        }
+
+        private void OnPlacementStarted()
+        {
+            _targetAlpha = _activeAlpha;
+        }
+
+        private void OnPlacementEnded()
+        {
+            _targetAlpha = _idleAlpha;
         }
 
         private void OnValidate()

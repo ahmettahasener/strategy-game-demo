@@ -49,6 +49,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: a3dfb879aff268c4a8ac5c206c3639d5, type: 3}
   - {fileID: 21300000, guid: 0e4df19b6df68364cbed2e586c2c8854, type: 3}
   - {fileID: 21300000, guid: b18d23eb4b8d5dc4db2c5f7c25672f59, type: 3}
+  - {fileID: 21300000, guid: 799aad9c006fb85409865b60af4c7cf4, type: 3}
   - {fileID: 21300000, guid: 5251aaac41e4300409c127284d654410, type: 3}
   - {fileID: 21300000, guid: 032d700dcebbe6140b41d54d2c153c36, type: 3}
   - {fileID: 21300000, guid: 6d21be5ddbb312a448645e4d5aaf5920, type: 3}
@@ -70,6 +71,7 @@ SpriteAtlas:
   - spr_siegeworkshop
   - spr_alchemistlab
   - fx_selection_ring
+  - fx_shadow
   - grid_cell
   - frame_healthbar
   - fx_path_marker

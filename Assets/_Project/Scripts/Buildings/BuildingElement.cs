@@ -21,12 +21,21 @@ namespace StrategyDemo.Buildings
         [SerializeField] private float _deathAnimationDuration = 0.24f;
         [SerializeField] private float _spawnPopDuration = 0.18f;
 
+        // Optional footprint selection ring. When assigned, selection shows a ground ring around the
+        // base instead of tinting the whole building cyan (which fights the art). Built at runtime and
+        // sized to the footprint, counter-scaling the building's non-uniform scale so it stays round.
+        [SerializeField] private Sprite _selectionRingSprite;
+        [SerializeField] private Color _selectionRingColor = new Color(0.4f, 0.9f, 1f, 0.9f);
+        [SerializeField] private float _ringWidthFactor = 1.04f; // ring spans a touch beyond the footprint
+        [SerializeField] private float _ringFlatten = 0.5f;       // ellipse height vs width
+
         private SpriteRenderer _spriteRenderer;
         private BoxCollider2D _collider;
         private Color _baseColor;
         private BuildingData _data;
         private Vector2Int _footprintOrigin;
         private Coroutine _damageFlashRoutine;
+        private SpriteRenderer _selectionRing;
 
         public BuildingData Data => _data;
 
@@ -47,6 +56,7 @@ namespace StrategyDemo.Buildings
             _spriteRenderer = GetComponent<SpriteRenderer>();
             _collider = GetComponent<BoxCollider2D>();
             _baseColor = _spriteRenderer.color;
+            BuildSelectionRing();
         }
 
         /// <summary>Configures the building after instantiation (called by the placement flow).</summary>
@@ -74,7 +84,53 @@ namespace StrategyDemo.Buildings
 
         protected override void SetHighlight(bool isOn)
         {
+            if (_selectionRing != null)
+            {
+                if (isOn)
+                {
+                    SizeSelectionRing();
+                }
+
+                _selectionRing.enabled = isOn;
+                return;
+            }
+
             _spriteRenderer.color = isOn ? _highlightTint : _baseColor;
+        }
+
+        private void BuildSelectionRing()
+        {
+            if (_selectionRingSprite == null)
+            {
+                return;
+            }
+
+            var ringObject = new GameObject("SelectionRing");
+            _selectionRing = ringObject.AddComponent<SpriteRenderer>();
+            _selectionRing.transform.SetParent(transform, false);
+            _selectionRing.sprite = _selectionRingSprite;
+            _selectionRing.color = _selectionRingColor;
+            _selectionRing.sortingLayerID = _spriteRenderer.sortingLayerID;
+            _selectionRing.sortingOrder = _spriteRenderer.sortingOrder - 1; // ground ring, under the building
+            _selectionRing.enabled = false;
+        }
+
+        // Size the ring to the footprint and sit it at the base, counter-scaling the building's
+        // non-uniform scale so the ring stays an even ellipse rather than a stretched oval.
+        private void SizeSelectionRing()
+        {
+            Bounds bounds = _spriteRenderer.bounds; // world-space
+            float width = bounds.size.x * _ringWidthFactor;
+            float height = width * _ringFlatten;
+
+            Vector3 lossy = transform.lossyScale;
+            Vector2 native = _selectionRingSprite.bounds.size;
+            _selectionRing.transform.localScale = new Vector3(
+                width / (native.x * Mathf.Max(0.0001f, Mathf.Abs(lossy.x))),
+                height / (native.y * Mathf.Max(0.0001f, Mathf.Abs(lossy.y))),
+                1f);
+            _selectionRing.transform.position = new Vector3(
+                bounds.center.x, bounds.min.y + height * 0.5f, transform.position.z);
         }
 
         protected override void OnDamaged()
@@ -134,7 +190,8 @@ namespace StrategyDemo.Buildings
             _spriteRenderer.color = _damageFlashTint;
             yield return new WaitForSeconds(_damageFlashDuration);
             _damageFlashRoutine = null;
-            _spriteRenderer.color = IsSelected ? _highlightTint : _baseColor;
+            // With a selection ring, selection no longer tints the sprite, so always restore base.
+            _spriteRenderer.color = _selectionRing == null && IsSelected ? _highlightTint : _baseColor;
         }
 
         private void StopDamageFlash()
