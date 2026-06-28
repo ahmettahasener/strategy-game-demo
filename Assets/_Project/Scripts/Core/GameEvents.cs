@@ -18,6 +18,9 @@ namespace StrategyDemo.Core
         /// <summary>An entity reached 0 HP and was destroyed.</summary>
         public static event Action<IDamageable> EntityDied;
 
+        /// <summary>An entity just took a hit; payload carries the entity and the damage amount.</summary>
+        public static event Action<IDamageable, int> DamageTaken;
+
         public static void RaiseSelectionChanged(ISelectable selected)
         {
             SelectionChanged?.Invoke(selected);
@@ -31,6 +34,11 @@ namespace StrategyDemo.Core
         public static void RaiseEntityDied(IDamageable entity)
         {
             EntityDied?.Invoke(entity);
+        }
+
+        public static void RaiseDamageTaken(IDamageable entity, int amount)
+        {
+            DamageTaken?.Invoke(entity, amount);
         }
     }
 }

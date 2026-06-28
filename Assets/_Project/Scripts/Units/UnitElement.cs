@@ -87,6 +87,7 @@ namespace StrategyDemo.Units
             OnDeselected(); // clears stale selection state (ring off / base colour)
             ResetHealth();
             PlaySpawnPop(_spawnPopDuration); // after ApplyBoardScale set the final scale
+            PlaySpawnDust();
         }
 
         /// <summary>

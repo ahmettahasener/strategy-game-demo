@@ -44,6 +44,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 4a491cb48b412e941ba134aef5e5cf31, type: 3}
   - {fileID: 21300000, guid: 4410aec5cc35d9e45aaca80f7cd30d3e, type: 3}
   - {fileID: 21300000, guid: f5c39fa6fc712374da258b09fbc0f4d3, type: 3}
+  - {fileID: 21300000, guid: 22e487075400a5f4782ba338783a06bd, type: 3}
   - {fileID: 21300000, guid: a43cfe27d582c4b44b9be330a4b1d81d, type: 3}
   - {fileID: 21300000, guid: 98bd2dc77a8a3fd47800f656137a50ab, type: 3}
   - {fileID: 21300000, guid: 9bf0963820151d34b8ca0a0f14ef040f, type: 3}
@@ -69,6 +70,7 @@ SpriteAtlas:
   - bar_healthfill
   - spr_knight
   - spr_arcanelibrary
+  - fx_dust
   - spr_trainingyard
   - spr_stoneworkshop
   - spr_guardpost

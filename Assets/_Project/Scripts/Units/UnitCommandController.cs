@@ -90,8 +90,22 @@ namespace StrategyDemo.Units
             if (combat != null && combat.CanAttack(target))
             {
                 combat.Attack(target);
-                ClearPathTrail();
-                ShowCommandMarker(target.transform.position, 0f);
+
+                // Attack walks the unit into range first; combat's approach coroutine runs up to its
+                // first yield synchronously, so its path is already on the movement. Show the same
+                // trail/entry as a move order when it actually has to close the distance.
+                var movement = unit.GetComponent<UnitMovement>();
+                if (movement != null && movement.IsMoving)
+                {
+                    IReadOnlyList<Vector2Int> path = movement.LastPath;
+                    ShowPathTrail(path, movement);
+                    ShowCommandMarker(target.transform.position, EntryAngle(path));
+                }
+                else
+                {
+                    ClearPathTrail();
+                    ShowCommandMarker(target.transform.position, 0f);
+                }
             }
             else
             {

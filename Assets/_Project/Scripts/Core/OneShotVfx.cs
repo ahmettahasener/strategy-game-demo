@@ -15,10 +15,16 @@ namespace StrategyDemo.Core
         private Color _color;
         private float _size;
         private float _duration;
+        private float _flatten;
 
-        /// <summary>Spawns a one-shot burst at <paramref name="position"/> using an atlased sprite.</summary>
+        /// <summary>
+        /// Spawns a one-shot burst at <paramref name="position"/> using an atlased sprite.
+        /// <paramref name="flatten"/> squashes the vertical axis (1 = round, &lt;1 = a ground-hugging
+        /// ellipse) for effects that read as lying on the floor, like a placement dust ring.
+        /// </summary>
         public static void Play(
-            Sprite sprite, Vector3 position, Color color, float size, float duration, int sortingOrder)
+            Sprite sprite, Vector3 position, Color color, float size, float duration, int sortingOrder,
+            float flatten = 1f)
         {
             if (sprite == null || size <= 0f || duration <= 0f)
             {
@@ -36,6 +42,7 @@ namespace StrategyDemo.Core
             vfx._color = color;
             vfx._size = size;
             vfx._duration = duration;
+            vfx._flatten = flatten;
         }
 
         private IEnumerator Start()
@@ -48,7 +55,8 @@ namespace StrategyDemo.Core
                 float t = Mathf.Clamp01(elapsed / _duration);
                 float eased = 1f - (1f - t) * (1f - t);
                 float worldSize = _size * Mathf.Lerp(0.4f, 1.3f, eased);
-                transform.localScale = Vector3.one * (worldSize / native);
+                float scale = worldSize / native;
+                transform.localScale = new Vector3(scale, scale * _flatten, 1f);
 
                 Color c = _color;
                 c.a = _color.a * (1f - t);

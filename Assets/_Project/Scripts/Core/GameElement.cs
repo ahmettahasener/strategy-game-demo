@@ -14,6 +14,11 @@ namespace StrategyDemo.Core
         [SerializeField] private Color _deathPoofColor = new Color(1f, 0.95f, 0.8f, 0.9f);
         [SerializeField, Range(0.2f, 3f)] private float _deathPoofScale = 1.1f;
 
+        [SerializeField] private Sprite _spawnDustSprite;
+        [SerializeField] private Color _spawnDustColor = new Color(1f, 0.97f, 0.85f, 0.8f);
+        [SerializeField, Range(0.2f, 3f)] private float _spawnDustScale = 1.15f;
+        [SerializeField, Range(0.1f, 1f)] private float _spawnDustFlatten = 0.45f;
+
         private int _currentHp;
         private bool _isDead;
         private bool _isSelected;
@@ -54,8 +59,10 @@ namespace StrategyDemo.Core
                 return;
             }
 
+            int applied = Mathf.Min(amount, _currentHp);
             _currentHp = Mathf.Max(0, _currentHp - amount);
             GameEvents.RaiseHealthChanged(this);
+            GameEvents.RaiseDamageTaken(this, applied);
             OnDamaged();
 
             if (_currentHp == 0)
@@ -117,6 +124,25 @@ namespace StrategyDemo.Core
             {
                 _spawnPopRoutine = StartCoroutine(SpawnPopRoutine(duration));
             }
+        }
+
+        /// <summary>
+        /// A flat dust ring that expands at the entity's base on appearance, so spawns/placements feel
+        /// like they land on the ground. Independent of the entity (an <see cref="OneShotVfx"/>), so it
+        /// is unaffected by the spawn-pop scaling. No-op until a sprite is assigned.
+        /// </summary>
+        protected void PlaySpawnDust()
+        {
+            if (_spawnDustSprite == null)
+            {
+                return;
+            }
+
+            var renderer = GetComponent<SpriteRenderer>();
+            Bounds bounds = renderer != null ? renderer.bounds : new Bounds(transform.position, Vector3.one);
+            Vector3 ground = new Vector3(bounds.center.x, bounds.min.y, 0f);
+            float size = bounds.size.x * _spawnDustScale;
+            OneShotVfx.Play(_spawnDustSprite, ground, _spawnDustColor, size, 0.35f, 2, _spawnDustFlatten);
         }
 
         /// <summary>Cancels an in-flight spawn pop (e.g. the entity dies mid-pop).</summary>

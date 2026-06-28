@@ -24,6 +24,12 @@ namespace StrategyDemo.Units
         [SerializeField] private float _hitSparkSize = 0.55f;
         [SerializeField] private float _hitSparkDuration = 0.18f;
 
+        [Header("Hit impact")]
+        [SerializeField] private float _lungeDistance = 0.18f;   // attacker jabs toward the target
+        [SerializeField] private float _lungeDuration = 0.13f;
+        [SerializeField] private float _knockbackDistance = 0.12f; // target recoils away from the hit
+        [SerializeField] private float _knockbackDuration = 0.16f;
+
         private UnitElement _unit;
         private float _nextAttackTime;
         private SpriteRenderer _spark;
@@ -66,12 +72,31 @@ namespace StrategyDemo.Units
             target.TakeDamage(_unit.Data.AttackDamage);
             _nextAttackTime = Time.time + _interval;
 
-            if (_hitSparkSprite != null && target is Component component)
+            if (target is Component component)
             {
-                PlaySpark(component.transform.position);
+                if (_hitSparkSprite != null)
+                {
+                    PlaySpark(component.transform.position);
+                }
+
+                PlayImpact(component);
             }
 
             return true;
+        }
+
+        // The attacker jabs toward the target and the target recoils away along the same axis, so a hit
+        // reads as a connected blow. Both are short transform punches that compose with movement.
+        private void PlayImpact(Component target)
+        {
+            Vector2 toTarget = target.transform.position - transform.position;
+            if (toTarget.sqrMagnitude < 0.0001f)
+            {
+                return;
+            }
+
+            HitImpact.GetOrAdd(gameObject).Nudge(toTarget, _lungeDistance, _lungeDuration);
+            HitImpact.GetOrAdd(target.gameObject).Nudge(toTarget, _knockbackDistance, _knockbackDuration);
         }
 
         private void PlaySpark(Vector3 position)
