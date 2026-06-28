@@ -90,6 +90,7 @@ namespace StrategyDemo.Units
             if (combat != null && combat.CanAttack(target))
             {
                 combat.Attack(target);
+                GameEvents.RaiseCommandIssued();
 
                 // Attack walks the unit into range first; combat's approach coroutine runs up to its
                 // first yield synchronously, so its path is already on the movement. Show the same
@@ -118,6 +119,11 @@ namespace StrategyDemo.Units
                     IReadOnlyList<Vector2Int> path = movement.LastPath;
                     ShowCommandMarker(GridManager.Instance.CellToWorldCenter(targetCell), EntryAngle(path));
                     ShowPathTrail(path, movement);
+                    GameEvents.RaiseCommandIssued();
+                }
+                else
+                {
+                    GameEvents.RaiseActionDenied();
                 }
             }
         }

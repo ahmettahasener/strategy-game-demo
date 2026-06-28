@@ -2969,6 +2969,61 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 14
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1929283094
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1929283096}
+  - component: {fileID: 1929283095}
+  m_Layer: 0
+  m_Name: AudioManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1929283095
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1929283094}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 01e99e3242c8cf94caa6c1f4dfe260ad, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _select: {fileID: 11400000, guid: 394a609868d412945a85b2a059a2c35d, type: 2}
+  _place: {fileID: 11400000, guid: 217fe2a59190dd944af03691206e9da9, type: 2}
+  _spawn: {fileID: 11400000, guid: 8d54434a62cc19f42bac275c3090190e, type: 2}
+  _hit: {fileID: 11400000, guid: 089d6df3166e5a24b9d7cc0cc330bcb9, type: 2}
+  _death: {fileID: 11400000, guid: 768a5f64e0b187d4bbfe73489915e1dc, type: 2}
+  _click: {fileID: 11400000, guid: 19c021224f6125f40abe86322750f5ef, type: 2}
+  _command: {fileID: 11400000, guid: f20a0e39e46695045a92f9df91f2ee5f, type: 2}
+  _deny: {fileID: 11400000, guid: d3302dbfe591b9845bf6effe41beeb66, type: 2}
+  _masterVolume: 0.8
+  _voiceCount: 8
+  _warmupSeconds: 0.3
+--- !u!4 &1929283096
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1929283094}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 19
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1936390364
 GameObject:
   m_ObjectHideFlags: 0

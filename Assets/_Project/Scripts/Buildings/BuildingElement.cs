@@ -81,6 +81,7 @@ namespace StrategyDemo.Buildings
             ResetHealth();
             PlaySpawnPop(_spawnPopDuration); // after ApplyFootprintScale set the final scale
             PlaySpawnDust();
+            GameEvents.RaiseBuildingPlaced(this);
         }
 
         protected override void SetHighlight(bool isOn)

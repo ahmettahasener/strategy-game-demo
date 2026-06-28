@@ -88,6 +88,7 @@ namespace StrategyDemo.Units
             ResetHealth();
             PlaySpawnPop(_spawnPopDuration); // after ApplyBoardScale set the final scale
             PlaySpawnDust();
+            GameEvents.RaiseUnitSpawned(this);
         }
 
         /// <summary>
