@@ -1,16 +1,23 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace StrategyDemo.Core
 {
     /// <summary>
-    /// A fire-and-forget visual burst: spawns an independent sprite that expands and fades, then
-    /// destroys itself. Independent (not parented) so it outlives the entity that triggered it — e.g.
-    /// a death "poof" while the dying entity is being pooled/destroyed. Hand-written Coroutine.
+    /// A fire-and-forget visual burst: an independent sprite that expands and fades (e.g. a death
+    /// "poof" or a placement dust ring). It is unparented from the entity that triggers it, so it
+    /// outlives that entity being pooled/destroyed. Instances are **recycled through a small internal
+    /// pool** rather than Instantiated/Destroyed per play, so frequent spawns/deaths add no GC churn —
+    /// the same pooling discipline used for units, menu cells, damage numbers and path dots. Hand-written
+    /// Coroutine, no tween library.
     /// </summary>
     [DisallowMultipleComponent]
     public sealed class OneShotVfx : MonoBehaviour
     {
+        private static readonly Stack<OneShotVfx> Pool = new Stack<OneShotVfx>();
+        private static Transform _container;
+
         private SpriteRenderer _renderer;
         private Color _color;
         private float _size;
@@ -18,9 +25,9 @@ namespace StrategyDemo.Core
         private float _flatten;
 
         /// <summary>
-        /// Spawns a one-shot burst at <paramref name="position"/> using an atlased sprite.
-        /// <paramref name="flatten"/> squashes the vertical axis (1 = round, &lt;1 = a ground-hugging
-        /// ellipse) for effects that read as lying on the floor, like a placement dust ring.
+        /// Plays a one-shot burst at <paramref name="position"/> using an atlased sprite, reusing a
+        /// pooled instance when one is free. <paramref name="flatten"/> squashes the vertical axis
+        /// (1 = round, &lt;1 = a ground-hugging ellipse) for effects that lie on the floor, like dust.
         /// </summary>
         public static void Play(
             Sprite sprite, Vector3 position, Color color, float size, float duration, int sortingOrder,
@@ -31,21 +38,44 @@ namespace StrategyDemo.Core
                 return;
             }
 
-            var go = new GameObject("Vfx") { transform = { position = position } };
-            var renderer = go.AddComponent<SpriteRenderer>();
-            renderer.sprite = sprite;
-            renderer.color = color;
-            renderer.sortingOrder = sortingOrder;
-
-            var vfx = go.AddComponent<OneShotVfx>();
-            vfx._renderer = renderer;
+            OneShotVfx vfx = Rent();
+            vfx.transform.position = position;
+            vfx._renderer.sprite = sprite;
+            vfx._renderer.color = color;
+            vfx._renderer.sortingOrder = sortingOrder;
             vfx._color = color;
             vfx._size = size;
             vfx._duration = duration;
             vfx._flatten = flatten;
+            vfx.gameObject.SetActive(true);
+            vfx.StartCoroutine(vfx.Run());
         }
 
-        private IEnumerator Start()
+        // Reuse a free instance (skipping any destroyed by a domain reload), else build a new one.
+        private static OneShotVfx Rent()
+        {
+            while (Pool.Count > 0)
+            {
+                OneShotVfx pooled = Pool.Pop();
+                if (pooled != null)
+                {
+                    return pooled;
+                }
+            }
+
+            if (_container == null)
+            {
+                _container = new GameObject("OneShotVfxPool").transform;
+            }
+
+            var go = new GameObject("Vfx");
+            go.transform.SetParent(_container, false);
+            var vfx = go.AddComponent<OneShotVfx>();
+            vfx._renderer = go.AddComponent<SpriteRenderer>();
+            return vfx;
+        }
+
+        private IEnumerator Run()
         {
             float native = Mathf.Max(0.0001f, _renderer.sprite.bounds.size.x);
             float elapsed = 0f;
@@ -64,7 +94,8 @@ namespace StrategyDemo.Core
                 yield return null;
             }
 
-            Destroy(gameObject);
+            gameObject.SetActive(false);
+            Pool.Push(this);
         }
     }
 }
