@@ -16,13 +16,10 @@ namespace StrategyDemo.Core
 
         private readonly UnitFactory _unitFactory = new UnitFactory();
 
-        // Reused probe buffer so the spawn-cell occupancy check stays allocation-free.
-        private static readonly Collider2D[] OverlapBuffer = new Collider2D[8];
-
         /// <summary>
         /// Produces <paramref name="unit"/> from <paramref name="producer"/> if the producer can make
         /// it and its spawn cell is on the board. Returns the spawned unit, or null if rejected.
-        /// Production is instant and unlimited — there is no cooldown or cost.
+        /// Production is instant and unlimited: there is no cooldown or cost.
         /// </summary>
         public UnitElement Produce(IProducer producer, UnitData unit)
         {
@@ -44,12 +41,11 @@ namespace StrategyDemo.Core
 
             // Spread produced units instead of stacking them on one cell: spawn on the nearest cell to
             // the producer's spawn point that is on the board, clear of buildings, and not already
-            // holding a unit. Units don't occupy the grid (that would turn them into pathfinding
-            // obstacles), so a light physics probe — not grid occupancy — decides if a cell is taken.
-            Vector2Int? openCell = FindOpenSpawnCell(spawnCell);
+            // holding a unit (see BoardQuery: units are detected by physics, not grid occupancy).
+            Vector2Int? openCell = BoardQuery.NearestOpenCell(spawnCell);
             if (openCell == null)
             {
-                // Every cell is under a building or already holds a unit — reject the order and signal
+                // Every cell is under a building or already holds a unit; reject the order and signal
                 // feedback (denial SFX / UI) instead of stacking units invisibly on one cell.
                 GameEvents.RaiseActionDenied();
                 return null;
@@ -57,97 +53,6 @@ namespace StrategyDemo.Core
 
             Vector3 spawnPosition = GridManager.Instance.CellToWorldCenter(openCell.Value);
             return _unitFactory.Create(unit, spawnPosition, Faction.Player, _unitsRoot);
-        }
-
-        // First open cell at or around the spawn point, by expanding Chebyshev rings (nearest first),
-        // or null when the whole board is full.
-        private Vector2Int? FindOpenSpawnCell(Vector2Int center)
-        {
-            // A burst of production can spawn several units in one frame; sync so the probe sees the
-            // colliders of units placed earlier this frame.
-            Physics2D.SyncTransforms();
-            float probeRadius = CellWorldSize() * 0.35f; // < half a cell, so a neighbour never reads as full
-
-            if (IsCellOpen(center, probeRadius))
-            {
-                return center;
-            }
-
-            // Search outward across the whole board so units fill every reachable cell before it is
-            // declared full — max(Width, Height) rings reach the farthest corner from any spawn cell.
-            GridManager grid = GridManager.Instance;
-            int maxRadius = Mathf.Max(grid.Width, grid.Height);
-            for (int radius = 1; radius <= maxRadius; radius++)
-            {
-                // Top and bottom edges of the ring (corners included here).
-                for (int x = center.x - radius; x <= center.x + radius; x++)
-                {
-                    var top = new Vector2Int(x, center.y + radius);
-                    if (IsCellOpen(top, probeRadius))
-                    {
-                        return top;
-                    }
-
-                    var bottom = new Vector2Int(x, center.y - radius);
-                    if (IsCellOpen(bottom, probeRadius))
-                    {
-                        return bottom;
-                    }
-                }
-
-                // Left and right edges (corners already covered above).
-                for (int y = center.y - radius + 1; y <= center.y + radius - 1; y++)
-                {
-                    var left = new Vector2Int(center.x - radius, y);
-                    if (IsCellOpen(left, probeRadius))
-                    {
-                        return left;
-                    }
-
-                    var right = new Vector2Int(center.x + radius, y);
-                    if (IsCellOpen(right, probeRadius))
-                    {
-                        return right;
-                    }
-                }
-            }
-
-            return null; // no open cell anywhere — the board is full
-        }
-
-        private static bool IsCellOpen(Vector2Int cell, float probeRadius)
-        {
-            GridManager grid = GridManager.Instance;
-            if (!grid.IsInBounds(cell) || !grid.IsAreaFree(cell, Vector2Int.one))
-            {
-                return false; // off-board or under a building
-            }
-
-            return !HasUnit(grid.CellToWorldCenter(cell), probeRadius);
-        }
-
-        private static bool HasUnit(Vector3 worldCenter, float probeRadius)
-        {
-            int count = Physics2D.OverlapCircleNonAlloc(worldCenter, probeRadius, OverlapBuffer);
-            for (int i = 0; i < count; i++)
-            {
-                if (OverlapBuffer[i] != null && OverlapBuffer[i].GetComponentInParent<UnitElement>() != null)
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        // World distance between two adjacent cell centres — the board's cell size, whatever the
-        // tilemap is set to — so the probe radius scales with the grid rather than assuming 1 unit.
-        private static float CellWorldSize()
-        {
-            GridManager grid = GridManager.Instance;
-            return Vector3.Distance(
-                grid.CellToWorldCenter(Vector2Int.zero),
-                grid.CellToWorldCenter(Vector2Int.right));
         }
 
         // Index loop instead of foreach: avoids the per-call enumerator allocation that foreach over

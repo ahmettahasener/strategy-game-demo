@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using StrategyDemo.Buildings;
 using StrategyDemo.Core;
 using StrategyDemo.Grid;
 using UnityEngine;
@@ -118,14 +119,29 @@ namespace StrategyDemo.Units
             }
             else
             {
-                // Move order: cancel any ongoing attack, then walk to the clicked cell.
+                // Move order: cancel any ongoing attack, then resolve where to actually walk. Clicking a
+                // friendly entity approaches its whole footprint's near side (so a 2x2 building isn't
+                // approached from the clicked corner); clicking ground walks there, or to the nearest
+                // open cell if it is taken.
                 combat?.StopCombat();
-                Vector2Int targetCell = GridManager.Instance.WorldToCell(_input.PointerWorldPosition);
+                Vector2Int unitCell = GridManager.Instance.WorldToCell(unit.transform.position);
+                Vector2Int? destination;
+                if (target != null)
+                {
+                    destination = BoardQuery.NearestOpenCellAround(FootprintCells(target), unitCell);
+                }
+                else
+                {
+                    Vector2Int clickedCell = GridManager.Instance.WorldToCell(_input.PointerWorldPosition);
+                    destination = GridManager.Instance.IsInBounds(clickedCell)
+                        ? BoardQuery.NearestOpenCellTo(clickedCell, unitCell)
+                        : null;
+                }
                 var movement = unit.GetComponent<UnitMovement>();
-                if (movement != null && movement.MoveTo(targetCell))
+                if (destination != null && movement != null && movement.MoveTo(destination.Value))
                 {
                     IReadOnlyList<Vector2Int> path = movement.LastPath;
-                    ShowCommandMarker(GridManager.Instance.CellToWorldCenter(targetCell), EntryAngle(path));
+                    ShowCommandMarker(GridManager.Instance.CellToWorldCenter(destination.Value), EntryAngle(path));
                     ShowPathTrail(path, movement);
                     GameEvents.RaiseCommandIssued();
                 }
@@ -136,8 +152,35 @@ namespace StrategyDemo.Units
             }
         }
 
-        // Angle (degrees) of the unit's final step into the target, so the marker — a sprite that
-        // points +X natively — faces the way the unit arrives (e.g. enters from below → points up).
+        // The cells a clicked entity occupies: a building's full footprint rectangle, or a unit's single
+        // cell. Used to approach the whole entity rather than just the clicked cell.
+        private static readonly List<Vector2Int> FootprintBuffer = new List<Vector2Int>();
+
+        private static IReadOnlyList<Vector2Int> FootprintCells(GameElement entity)
+        {
+            FootprintBuffer.Clear();
+            if (entity is BuildingElement building)
+            {
+                Vector2Int origin = building.FootprintOrigin;
+                Vector2Int size = building.FootprintSize;
+                for (int x = 0; x < size.x; x++)
+                {
+                    for (int y = 0; y < size.y; y++)
+                    {
+                        FootprintBuffer.Add(new Vector2Int(origin.x + x, origin.y + y));
+                    }
+                }
+            }
+            else
+            {
+                FootprintBuffer.Add(GridManager.Instance.WorldToCell(entity.transform.position));
+            }
+
+            return FootprintBuffer;
+        }
+
+        // Angle (degrees) of the unit's final step into the target, so the marker - a sprite that
+        // points +X natively - faces the way the unit arrives (e.g. enters from below points up).
         private static float EntryAngle(IReadOnlyList<Vector2Int> path)
         {
             if (path == null || path.Count < 2)
@@ -212,7 +255,7 @@ namespace StrategyDemo.Units
 
         // Lays a dot on each cell between the unit and its target, so the player can see the route the
         // unit will walk. Dots stay lit while the unit travels, then fade out (see PathTrailRoutine).
-        // One pooled renderer per cell, all using the same atlas dot sprite — no per-order allocation.
+        // One pooled renderer per cell, all using the same atlas dot sprite; no per-order allocation.
         private void ShowPathTrail(IReadOnlyList<Vector2Int> path, UnitMovement movement)
         {
             if (_pathRoutine != null)
@@ -221,9 +264,9 @@ namespace StrategyDemo.Units
                 _pathRoutine = null;
             }
 
-            // path[0] is the cell the unit stands on and the last cell gets the command marker, so the
-            // dots cover only the cells strictly in between.
-            int dotCount = _pathDotSprite != null && path != null ? Mathf.Max(0, path.Count - 2) : 0;
+            // path[0] is the cell the unit stands on, so skip it; every other cell up to and including
+            // the destination gets a dot (the command marker sits on the destination too).
+            int dotCount = _pathDotSprite != null && path != null ? Mathf.Max(0, path.Count - 1) : 0;
             for (int i = 0; i < dotCount; i++)
             {
                 SpriteRenderer dot = GetPathDot(i);
