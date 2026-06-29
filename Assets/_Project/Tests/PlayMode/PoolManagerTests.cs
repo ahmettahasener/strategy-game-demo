@@ -9,6 +9,7 @@ namespace StrategyDemo.Tests.PlayMode
         private PoolManager _pool;
         private GameObject _prefab;
         private GameObject _otherPrefab;
+        private GameObject _activeRoot;
 
         [SetUp]
         public void SetUp()
@@ -16,6 +17,7 @@ namespace StrategyDemo.Tests.PlayMode
             _pool = new GameObject("PoolManager").AddComponent<PoolManager>();
             _prefab = new GameObject("Prefab");
             _otherPrefab = new GameObject("OtherPrefab");
+            _activeRoot = new GameObject("UnitsRoot");
         }
 
         [TearDown]
@@ -24,6 +26,7 @@ namespace StrategyDemo.Tests.PlayMode
             Object.DestroyImmediate(_pool.gameObject);
             Object.DestroyImmediate(_prefab);
             Object.DestroyImmediate(_otherPrefab);
+            Object.DestroyImmediate(_activeRoot);
         }
 
         [Test]
@@ -80,6 +83,24 @@ namespace StrategyDemo.Tests.PlayMode
 
             Assert.AreSame(first, reused);
             Assert.AreNotSame(reused, fresh);
+        }
+
+        [Test]
+        public void Get_WithActiveParent_MovesInstanceUnderThatParent()
+        {
+            GameObject instance = _pool.Get(_prefab, _activeRoot.transform);
+
+            Assert.AreSame(_activeRoot.transform, instance.transform.parent);
+        }
+
+        [Test]
+        public void Release_AfterActiveParent_ReturnsInstanceUnderPool()
+        {
+            GameObject instance = _pool.Get(_prefab, _activeRoot.transform);
+
+            _pool.Release(instance);
+
+            Assert.AreSame(_pool.transform, instance.transform.parent);
         }
     }
 }
