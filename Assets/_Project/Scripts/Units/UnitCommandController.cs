@@ -84,6 +84,14 @@ namespace StrategyDemo.Units
                 return;
             }
 
+            // Only the player's own units take orders. An enemy unit can be selected (to read its HP),
+            // but issuing it a move/attack command is rejected with denial feedback.
+            if (unit.Faction != Faction.Player)
+            {
+                GameEvents.RaiseActionDenied();
+                return;
+            }
+
             GameElement target = EntityUnderPointer();
             var combat = unit.GetComponent<UnitCombat>();
 

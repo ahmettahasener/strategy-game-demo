@@ -2,6 +2,7 @@ using StrategyDemo.Buildings;
 using StrategyDemo.Core;
 using StrategyDemo.Data;
 using StrategyDemo.Grid;
+using StrategyDemo.Scenario;
 using StrategyDemo.Units;
 using UnityEngine;
 
@@ -25,6 +26,7 @@ namespace StrategyDemo.DebugTools
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
         private readonly UnitFactory _unitFactory = new UnitFactory();
         private readonly BuildingFactory _buildingFactory = new BuildingFactory();
+        private ScenarioSetup _scenario;
 
         private void Update()
         {
@@ -48,6 +50,21 @@ namespace StrategyDemo.DebugTools
             {
                 ToggleGridOverlay();
             }
+            else if (Input.GetKeyDown(KeyCode.R))
+            {
+                ResetScenario();
+            }
+        }
+
+        // Clears the board and re-spawns the fixed enemy layout (deterministic restart for testing).
+        private void ResetScenario()
+        {
+            if (_scenario == null)
+            {
+                _scenario = FindObjectOfType<ScenarioSetup>();
+            }
+
+            _scenario?.ResetScenario();
         }
 
         /// <summary>Deals lethal damage to the selected entity to test destroy-at-0-HP (Brief #11).</summary>

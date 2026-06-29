@@ -21,6 +21,7 @@ namespace StrategyDemo.UI
         [SerializeField] private Text _hpText;
         [SerializeField] private Transform _cardContainer;
         [SerializeField] private UnitCardView _unitCardPrefab;
+        [SerializeField] private Color _enemyTint = new Color(1f, 0.4f, 0.4f); // matches the board enemy tint
         [SerializeField] private float _showScaleFrom = 0.92f;
         [SerializeField] private float _showDuration = 0.14f;
 
@@ -68,6 +69,9 @@ namespace StrategyDemo.UI
             bool wasHidden = !_panelRoot.activeSelf;
             _panelRoot.SetActive(true);
             _iconImage.sprite = element.Definition.Icon;
+            // Tint the icon to match the entity's faction colour on the board (red for enemies), so the
+            // info panel reads as the same unit you clicked rather than a neutral player-coloured one.
+            _iconImage.color = element.Faction == Faction.Enemy ? _enemyTint : Color.white;
             _nameText.text = element.Definition.DisplayName;
             UpdateHp(element);
             BuildCards(element);
@@ -129,7 +133,9 @@ namespace StrategyDemo.UI
         private void BuildCards(GameElement element)
         {
             ClearCards();
-            if (!(element is IProducer producer) || !producer.CanProduce)
+            // Only the player's own producers offer production; an enemy building still shows its
+            // identity and HP, but no produce cards (you can't make units from the enemy's barracks).
+            if (!(element is IProducer producer) || !producer.CanProduce || element.Faction != Faction.Player)
             {
                 return;
             }

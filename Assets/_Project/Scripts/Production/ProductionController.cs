@@ -26,7 +26,10 @@ namespace StrategyDemo.Production
 
         private void OnProduceRequested(UnitData unit)
         {
-            if (SelectionManager.Instance.Current is IProducer producer)
+            // Production belongs to the player's own buildings only (defence in depth: the info panel
+            // already hides produce cards for enemy producers).
+            if (SelectionManager.Instance.Current is IProducer producer
+                && producer is GameElement element && element.Faction == Faction.Player)
             {
                 ProductionManager.Instance.Produce(producer, unit);
             }

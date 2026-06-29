@@ -27,6 +27,46 @@ namespace StrategyDemo.Scenario
             SpawnEnemyUnits();
         }
 
+        /// <summary>
+        /// Clears every placed entity, frees their grid cells, and re-spawns the fixed enemy layout —
+        /// a deterministic "back to the starting demo state" (no randomness). There is no other way to
+        /// clear the player's own buildings once the board fills up, so this is driven by a development-
+        /// only hotkey (see <c>CombatDebug</c>); it never runs in a release build.
+        /// </summary>
+        public void ResetScenario()
+        {
+            SelectionManager.Instance?.Deselect();
+            ClearBoard();
+            SpawnEnemyBuildings();
+            SpawnEnemyUnits();
+        }
+
+        private void ClearBoard()
+        {
+            if (_buildingsRoot != null)
+            {
+                for (int i = _buildingsRoot.childCount - 1; i >= 0; i--)
+                {
+                    GameObject child = _buildingsRoot.GetChild(i).gameObject;
+                    if (child.TryGetComponent(out BuildingElement building))
+                    {
+                        GridManager.Instance.Free(building.FootprintOrigin, building.FootprintSize);
+                    }
+
+                    Destroy(child);
+                }
+            }
+
+            if (_unitsRoot != null)
+            {
+                for (int i = _unitsRoot.childCount - 1; i >= 0; i--)
+                {
+                    // Units are pooled — Release returns them to the pool (and destroys any that aren't).
+                    PoolManager.Instance.Release(_unitsRoot.GetChild(i).gameObject);
+                }
+            }
+        }
+
         private void SpawnEnemyBuildings()
         {
             if (_enemyBuildings == null)
