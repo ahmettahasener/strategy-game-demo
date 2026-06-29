@@ -10,12 +10,21 @@ namespace StrategyDemo.Core
     {
         private void Update()
         {
-            // Esc quits the built application so the reviewer can close the windowed/fullscreen build
-            // cleanly (Application.Quit is a no-op in the editor, so this does nothing during Play mode).
+            // Esc quits: in a build it closes the app cleanly; in the editor Application.Quit is a no-op,
+            // so we stop Play mode instead, giving the same "the game exited" result while testing.
             if (Input.GetKeyDown(KeyCode.Escape))
             {
-                Application.Quit();
+                Quit();
             }
+        }
+
+        private static void Quit()
+        {
+#if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying = false;
+#else
+            Application.Quit();
+#endif
         }
     }
 }

@@ -178,6 +178,34 @@ namespace StrategyDemo.Core
             return best;
         }
 
+        /// <summary>
+        /// True when every cell of the <paramref name="size"/> footprint at <paramref name="origin"/> is
+        /// on the board, free of buildings, and free of units — the placement rule for a multi-cell
+        /// building, shared by debug spawning so it can't drop a building out of bounds or onto a unit.
+        /// </summary>
+        public static bool IsFootprintClear(Vector2Int origin, Vector2Int size)
+        {
+            if (size.x <= 0 || size.y <= 0)
+            {
+                return false;
+            }
+
+            Physics2D.SyncTransforms();
+            float probeRadius = CellWorldSize() * 0.35f;
+            for (int x = 0; x < size.x; x++)
+            {
+                for (int y = 0; y < size.y; y++)
+                {
+                    if (!IsCellOpen(new Vector2Int(origin.x + x, origin.y + y), probeRadius))
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        }
+
         private static void CollectOpenRing(Vector2Int center, int radius, float probeRadius, List<Vector2Int> into)
         {
             for (int x = center.x - radius; x <= center.x + radius; x++)

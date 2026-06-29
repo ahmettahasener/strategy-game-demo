@@ -102,8 +102,23 @@ namespace StrategyDemo.DebugTools
                 return;
             }
 
+            // Only spawn on the board, and never stack on a building or another unit: clamp the click to
+            // the nearest open cell (same rule production uses), and reject clicks off the grid entirely.
             Vector2Int cell = GridManager.Instance.WorldToCell(_input.PointerWorldPosition);
-            Vector3 world = GridManager.Instance.CellToWorldCenter(cell);
+            if (!GridManager.Instance.IsInBounds(cell))
+            {
+                GameEvents.RaiseActionDenied();
+                return;
+            }
+
+            Vector2Int? openCell = BoardQuery.NearestOpenCell(cell);
+            if (openCell == null)
+            {
+                GameEvents.RaiseActionDenied();
+                return;
+            }
+
+            Vector3 world = GridManager.Instance.CellToWorldCenter(openCell.Value);
             _unitFactory.Create(_enemyUnit, world, Faction.Enemy, _unitsRoot);
         }
 
@@ -117,8 +132,13 @@ namespace StrategyDemo.DebugTools
             Vector2Int pointerCell = GridManager.Instance.WorldToCell(_input.PointerWorldPosition);
             Vector2Int origin = pointerCell
                 - new Vector2Int(_enemyBuilding.Size.x / 2, _enemyBuilding.Size.y / 2);
-            if (!GridManager.Instance.IsAreaFree(origin, _enemyBuilding.Size))
+
+            // Same placement rule as the player's PlacementController: the footprint must be on the
+            // board, clear of other buildings, and clear of units — so a debug building can't be dropped
+            // off-grid or on top of a soldier.
+            if (!BoardQuery.IsFootprintClear(origin, _enemyBuilding.Size))
             {
+                GameEvents.RaiseActionDenied();
                 return;
             }
 
