@@ -8,6 +8,7 @@ namespace StrategyDemo.Grid
     /// a single renderer instead of one sprite per cell.
     /// </summary>
     [DisallowMultipleComponent]
+    [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
     public sealed class BoardGridOverlay : MonoBehaviour
     {
         [SerializeField] private Vector2 _origin = Vector2.zero;
@@ -76,14 +77,6 @@ namespace StrategyDemo.Grid
         private void OnPlacementEnded()
         {
             _targetAlpha = _idleAlpha;
-        }
-
-        private void OnValidate()
-        {
-            if (Application.isPlaying)
-            {
-                Build();
-            }
         }
 
         private void OnDestroy()
